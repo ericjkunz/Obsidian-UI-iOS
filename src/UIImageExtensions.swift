@@ -51,17 +51,22 @@ internal extension UIImage {
 
     }
     
-    func cropToBounds(rect: CGRect) -> UIImage {
-        let contextImage: UIImage = UIImage(CGImage: self.CGImage!)
-        let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage!, rect)!
-        let image: UIImage = UIImage(CGImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
-        return image
+    func cropToBounds(rect: CGRect) -> UIImage? {
+        guard let cg = self.CGImage else {
+            return nil
+        }
+        
+        guard let cropped = CGImageCreateWithImageInRect(cg, rect) else {
+            return nil
+        }
+        
+        return UIImage(CGImage: cropped, scale: self.scale, orientation: self.imageOrientation)
     }
     
     func maskWithImage(mask: UIImage) -> UIImage? {
-        let ctx = CGBitmapContextCreate(nil, Int(self.size.width), Int(self.size.height), 8, 0, CGColorSpaceCreateDeviceRGB(), CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let ctx = CGBitmapContextCreate(nil, Int(self.size.width), Int(self.size.height), CGImageGetBitsPerComponent(self.CGImage), 0, CGColorSpaceCreateDeviceRGB(), CGImageAlphaInfo.PremultipliedLast.rawValue)
+        
         let imageRect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
-
         CGContextClipToMask(ctx, imageRect, mask.CGImage)
         CGContextDrawImage(ctx, imageRect, self.CGImage)
         
@@ -86,5 +91,5 @@ internal extension UIImage {
         
         return scaledImage
     }
-
+    
 }

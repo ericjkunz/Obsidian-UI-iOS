@@ -10,7 +10,7 @@ import Foundation
 
 extension CIImage {
     
-    func locationOfFaces() -> [CGRect]? {
+    func faceRects() -> [CGRect]? {
         let detector = CIDetector(ofType: CIDetectorTypeFace, context:nil, options:nil)
         let features = detector.featuresInImage(self)
         guard features.count > 0 else {

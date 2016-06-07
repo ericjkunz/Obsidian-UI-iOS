@@ -68,7 +68,7 @@ Find all faces in an image
     let image = UIImage(named: "myImage")!
     let ci = CIImage(CGImage: image.CGImage!)
 
-    let faces = ci.locationOfFaces()
+    let faces = ci.faceRects()
    ```
 
 Quickly setup a view with a nib. 
