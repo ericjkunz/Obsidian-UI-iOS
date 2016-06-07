@@ -87,7 +87,14 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     /// The quality of image.
     var sessionPreset = AVCaptureSessionPresetPhoto
     
-    public init(useFrontCamera: Bool = false, sessionPreset: String = AVCaptureSessionPresetiFrame1280x720) {
+    /**
+    Initializes a Camera.
+    
+    - parameter useFrontCamera: Whether to use the front camera. Default is false.
+    - parameter sessionPreset: The quality of the camera input. Use [AVCaptureSessionPresets](https://developer.apple.com/library/ios/documentation/AVFoundation/Reference/AVCaptureSession_Class/#//apple_ref/doc/constant_group/Video_Input_Presets "Session Presets"). Default is AVCaptureSessionPresetPhoto.
+    
+    */
+    public init(useFrontCamera: Bool = false, sessionPreset: String = AVCaptureSessionPresetPhoto) {
         super.init()
         self.sessionPreset = sessionPreset
         self.useFrontCamera = useFrontCamera

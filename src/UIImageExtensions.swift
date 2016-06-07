@@ -50,5 +50,41 @@ internal extension UIImage {
         return nil
 
     }
+    
+    func cropToBounds(rect: CGRect) -> UIImage {
+        let contextImage: UIImage = UIImage(CGImage: self.CGImage!)
+        let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage!, rect)!
+        let image: UIImage = UIImage(CGImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
+        return image
+    }
+    
+    func maskWithImage(mask: UIImage) -> UIImage? {
+        let ctx = CGBitmapContextCreate(nil, Int(self.size.width), Int(self.size.height), 8, 0, CGColorSpaceCreateDeviceRGB(), CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let imageRect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
+
+        CGContextClipToMask(ctx, imageRect, mask.CGImage)
+        CGContextDrawImage(ctx, imageRect, self.CGImage)
+        
+        if let resultImage = CGBitmapContextCreateImage(ctx) {
+            return UIImage(CGImage: resultImage)
+        }
+        else {
+            return nil
+        }
+    }
+    
+    func resizeImage(size: CGSize) -> UIImage {
+        let size = CGSizeApplyAffineTransform(self.size, CGAffineTransformMakeScale(size.width / self.size.width, size.height / self.size.height))
+        let hasAlpha = false
+        let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
+        
+        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
+        self.drawInRect(CGRect(origin: CGPointZero, size: size))
+        
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return scaledImage
+    }
 
 }

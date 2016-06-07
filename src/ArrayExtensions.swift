@@ -50,7 +50,7 @@ public extension Array {
 
         for item in self {
             if test(item) {
-                result++
+                result += 1
             }
         }
 

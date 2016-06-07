@@ -73,7 +73,7 @@ public final class BasicTabBar: BaseTabBar {
         let buttons = tabNames.map { (title) -> UIButton in
             let b = UIButton(type: .Custom)
             b.setTitle(title, forState: .Normal)
-            b.addTarget(self, action: "selectTabButton:", forControlEvents: .TouchUpInside)
+            b.addTarget(self, action: #selector(BasicTabBar.selectTabButton(_:)), forControlEvents: .TouchUpInside)
             b.titleLabel?.font = self.tabFont
             b.setTitleColor(self.textColor, forState: .Normal)
             b.setTitleColor(self.tintColor, forState: .Selected)

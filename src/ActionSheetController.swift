@@ -89,7 +89,7 @@ private class ActionSheetPresentationController: UIPresentationController {
         dimmingView.frame = containerView!.bounds
         dimmingView.alpha = 0.0
 
-        let tap = UITapGestureRecognizer(target: self, action: "dismissController:")
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissController))
         dimmingView.addGestureRecognizer(tap)
 
         containerView!.addSubview(dimmingView)
@@ -282,7 +282,7 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
         view.addConstraints(verticalConstraints)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "userTappedAbove", name: "actionSheetDismissedByTapAbove", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ActionSheetController.userTappedAbove), name: "actionSheetDismissedByTapAbove", object: nil)
     }
 
     // MARK: Actions
