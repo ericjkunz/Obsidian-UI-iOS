@@ -100,3 +100,17 @@ Setup a camera in a few lines.
         camera.captureImage()
     }
 
+Easily crop, mask, or resize an image
+
+    let image = UIImage(named: "myImage")
+    
+    let croppedImage = image.cropToBounds(CGRect(x: 10, y: 10, width: 10, height: 10))
+    let maskedImage = image.maskWithImage(anotherImage)
+    let resizedImage = image.resizeImage(CGSize(width: 10, height: 10))
+
+Find all faces in an image
+
+    let image = UIImage(named: "myImage")!
+    let ci = CIImage(CGImage: image.CGImage!)
+
+    let faces = ci.locationOfFaces()
