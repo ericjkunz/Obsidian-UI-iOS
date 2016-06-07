@@ -10,13 +10,13 @@ Obsidian UI is a collection of useful iOS user interface components and utilitie
 Obsidian UI is available on CocoaPods.
 Add the following to your `Podfile`:
 
-```
+```ruby
 pod 'Obsidian-UI-iOS'
 ```
 
 Then add the following to import:
 
-```
+```swift
 import Obsidian_UI_iOS 
 ```
 
@@ -36,7 +36,7 @@ Obsidian UI is released under the MIT license. See LICENSE for details.
 
 Setup a camera in a few lines.
 
-    ```swift
+   ```swift
     let camera = Camera()
 
     override func viewDidLoad() {
@@ -50,30 +50,30 @@ Setup a camera in a few lines.
     func buttonTapped() {
         camera.captureImage()
     }
-    ```
+   ```
 
 Easily crop, mask, or resize an image
 
-    ```swift
+   ```swift
     let image = UIImage(named: "myImage")
     
     let croppedImage = image.cropToBounds(CGRect(x: 10, y: 10, width: 10, height: 10))
     let maskedImage = image.maskWithImage(anotherImage)
     let resizedImage = image.resizeImage(CGSize(width: 10, height: 10))
-    ```
+   ```
 
 Find all faces in an image
 
-    ```swift
+   ```swift
     let image = UIImage(named: "myImage")!
     let ci = CIImage(CGImage: image.CGImage!)
 
     let faces = ci.locationOfFaces()
-    ```
+   ```
 
 Quickly setup a view with a nib. 
 
-    ```swift
+   ```swift
     class View: NibView {
     
       @IBOutlet weak var button: UIButton!
@@ -88,14 +88,14 @@ Quickly setup a view with a nib.
       }
 
     }
-    ```
+   ```
 
 Add a label with a top, middle, or bottom vertical alignment.
 
-    ```swift
+  ```swift
     var label = VerticallyAlignedLabel()
     label.verticalAlignment = .Top
-    ```
+  ```
 
 
 You can check for valid input in a text field. Below the field checks for any input at all (length > 0). The label's
