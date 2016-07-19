@@ -18,6 +18,7 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import Foundation
+import CoreGraphics
 
 // MARK: CGPoint
 
@@ -30,12 +31,12 @@ extension CGPoint {
     }
 
     /// Returns a copy with the x value changed.
-    public func with(x  x: CGFloat) -> CGPoint {
+    public func with(x: CGFloat) -> CGPoint {
         return CGPoint(x: x, y: y)
     }
 
     /// Returns a copy with the y value changed.
-    public func with(y  y: CGFloat) -> CGPoint {
+    public func with(y: CGFloat) -> CGPoint {
         return CGPoint(x: x, y: y)
     }
 
@@ -57,11 +58,11 @@ extension CGSize {
     }
 
     /// Returns a copy with the width value changed.
-    public func with(width  width: CGFloat) -> CGSize {
+    public func with(width: CGFloat) -> CGSize {
         return CGSize(width: width, height: height)
     }
     /// Returns a copy with the height value changed.
-    public func with(height  height: CGFloat) -> CGSize {
+    public func with(height: CGFloat) -> CGSize {
         return CGSize(width: width, height: height)
     }
 }
@@ -202,45 +203,45 @@ extension CGRect {
     // MARK: with
 
     /// Returns a copy with the origin value changed.
-    public func with(origin  origin: CGPoint) -> CGRect {
+    public func with(origin: CGPoint) -> CGRect {
         return CGRect(origin: origin, size: size)
     }
     /// Returns a copy with the x and y values changed.
-    public func with(x  x: CGFloat, y: CGFloat) -> CGRect {
+    public func with(x: CGFloat, y: CGFloat) -> CGRect {
         return with(origin: CGPoint(x: x, y: y))
     }
     /// Returns a copy with the x value changed.
-    public func with(x  x: CGFloat) -> CGRect {
+    public func with(x: CGFloat) -> CGRect {
         return with(x: x, y: y)
     }
     /// Returns a copy with the y value changed.
-    public func with(y  y: CGFloat) -> CGRect {
+    public func with(y: CGFloat) -> CGRect {
         return with(x: x, y: y)
     }
 
     /// Returns a copy with the size value changed.
-    public func with(size  size: CGSize) -> CGRect {
+    public func with(size: CGSize) -> CGRect {
         return CGRect(origin: origin, size: size)
     }
     /// Returns a copy with the width and height values changed.
-    public func with(width  width: CGFloat, height: CGFloat) -> CGRect {
+    public func with(width: CGFloat, height: CGFloat) -> CGRect {
         return with(size: CGSize(width: width, height: height))
     }
     /// Returns a copy with the width value changed.
-    public func with(width  width: CGFloat) -> CGRect {
+    public func with(width: CGFloat) -> CGRect {
         return with(width: width, height: height)
     }
     /// Returns a copy with the height value changed.
-    public func with(height  height: CGFloat) -> CGRect {
+    public func with(height: CGFloat) -> CGRect {
         return with(width: width, height: height)
     }
 
     /// Returns a copy with the x and width values changed.
-    public func with(x  x: CGFloat, width: CGFloat) -> CGRect {
+    public func with(x: CGFloat, width: CGFloat) -> CGRect {
         return CGRect(origin: CGPoint(x: x, y: y), size: CGSize(width: width, height: height))
     }
     /// Returns a copy with the y and height values changed.
-    public func with(y  y: CGFloat, height: CGFloat) -> CGRect {
+    public func with(y: CGFloat, height: CGFloat) -> CGRect {
         return CGRect(origin: CGPoint(x: x, y: y), size: CGSize(width: width, height: height))
     }
 
@@ -251,11 +252,11 @@ extension CGRect {
         return with(x: x + dx, y: y + dy)
     }
     /// Returns a copy with the x value values offset.
-    public func rectByOffsetting(dx  dx: CGFloat) -> CGRect {
+    public func rectByOffsetting(dx: CGFloat) -> CGRect {
         return with(x: x + dx)
     }
     /// Returns a copy with the y value values offset.
-    public func rectByOffsetting(dy  dy: CGFloat) -> CGRect {
+    public func rectByOffsetting(dy: CGFloat) -> CGRect {
         return with(y: y + dy)
     }
     /// Returns a copy with the x and y values offset.
@@ -268,11 +269,11 @@ extension CGRect {
         offsetInPlace(dx: dx, dy: dy)
     }
     /// Modifies the x value values by offsetting.
-    public mutating func offset(dx dx: CGFloat = 0) {
+    public mutating func offset(dx: CGFloat = 0) {
         x += dx
     }
     /// Modifies the y value values by offsetting.
-    public mutating func offset(dy dy: CGFloat = 0) {
+    public mutating func offset(dy: CGFloat = 0) {
         y += dy
     }
     /// Modifies the x and y values by offsetting.
@@ -298,33 +299,33 @@ extension CGRect {
         let dx = width - size.width
         let dy = height - size.height
         switch edge {
-        case .MinXEdge:
+        case .minXEdge:
             return CGPoint(x: x, y: y + dy * 0.5)
-        case .MinYEdge:
+        case .minYEdge:
             return CGPoint(x: x + dx * 0.5, y: y)
-        case .MaxXEdge:
+        case .maxXEdge:
             return CGPoint(x: x + dx, y: y + dy * 0.5)
-        case .MaxYEdge:
+        case .maxYEdge:
             return CGPoint(x: x + dx * 0.5, y: y + dy)
         }
     }
 
     /// Returns a rect of the specified size centered in this rect touching the specified corner.
     public func rectByAligning(size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) -> CGRect {
-        return CGRect(origin: alignedOrigin(size, corner: e1, e2), size: size)
+        return CGRect(origin: alignedOrigin(corner: e1, e2, size), size: size)
     }
 
     private func alignedOrigin(size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) -> CGPoint {
         let dx = width - size.width
         let dy = height - size.height
         switch (e1, e2) {
-        case (.MinXEdge, .MinYEdge), (.MinYEdge, .MinXEdge):
+        case (.minXEdge, .minYEdge), (.minYEdge, .minXEdge):
             return CGPoint(x: x, y: y)
-        case (.MaxXEdge, .MinYEdge), (.MinYEdge, .MaxXEdge):
+        case (.maxXEdge, .minYEdge), (.minYEdge, .maxXEdge):
             return CGPoint(x: x + dx, y: y)
-        case (.MinXEdge, .MaxYEdge), (.MaxYEdge, .MinXEdge):
+        case (.minXEdge, .maxYEdge), (.maxYEdge, .minXEdge):
             return CGPoint(x: x, y: y + dy)
-        case (.MaxXEdge, .MaxYEdge), (.MaxYEdge, .MaxXEdge):
+        case (.maxXEdge, .maxYEdge), (.maxYEdge, .maxXEdge):
             return CGPoint(x: x + dx, y: y + dy)
         default:
             preconditionFailure("Cannot align to this combination of edges")
@@ -343,7 +344,7 @@ extension CGRect {
 
     /// Modifies all values by setting the size while centering the rect touching the specified corner.
     public mutating func setSizeAligned(size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) {
-        self = rectByAligning(size, corner: e1, e2)
+        self = rectByAligning(corner: e1, e2, size)
     }
 }
 
@@ -353,7 +354,7 @@ extension CGAffineTransform: Equatable {
 }
 
 public func == (t1: CGAffineTransform, t2: CGAffineTransform) -> Bool {
-    return CGAffineTransformEqualToTransform(t1, t2)
+    return t1.equalTo(t2)
 }
 
 extension CGAffineTransform: CustomDebugStringConvertible {
@@ -369,7 +370,8 @@ public func + (p1: CGPoint, p2: CGPoint) -> CGPoint {
     return CGPoint(x: p1.x + p2.x, y: p1.y + p2.y)
 }
 /// Modifies the x and y values by adding the coordinates of another point.
-public func += (inout p1: CGPoint, p2: CGPoint) {
+public func += (p1: CGPoint, p2: CGPoint) {
+    var p1 = p1
     p1.x += p2.x
     p1.y += p2.y
 }
@@ -378,7 +380,8 @@ public func - (p1: CGPoint, p2: CGPoint) -> CGPoint {
     return CGPoint(x: p1.x - p2.x, y: p1.y - p2.y)
 }
 /// Modifies the x and y values by subtracting the coordinates of another points.
-public func -= (inout p1: CGPoint, p2: CGPoint) {
+public func -= (p1: CGPoint, p2: CGPoint) {
+    var p1 = p1
     p1.x -= p2.x
     p1.y -= p2.y
 }
@@ -388,7 +391,8 @@ public func + (point: CGPoint, size: CGSize) -> CGPoint {
     return CGPoint(x: point.x + size.width, y: point.y + size.height)
 }
 /// Modifies the x and y values by adding a size to the coordinates.
-public func += (inout point: CGPoint, size: CGSize) {
+public func += (point: CGPoint, size: CGSize) {
+    var point = point
     point.x += size.width
     point.y += size.height
 }
@@ -397,7 +401,8 @@ public func - (point: CGPoint, size: CGSize) -> CGPoint {
     return CGPoint(x: point.x - size.width, y: point.y - size.height)
 }
 /// Modifies the x and y values by subtracting a size from the coordinates.
-public func -= (inout point: CGPoint, size: CGSize) {
+public func -= (point: CGPoint, size: CGSize) {
+    var point = point
     point.x -= size.width
     point.y -= size.height
 }
@@ -407,7 +412,8 @@ public func + (point: CGPoint, tuple: (CGFloat, CGFloat)) -> CGPoint {
     return CGPoint(x: point.x + tuple.0, y: point.y + tuple.1)
 }
 /// Modifies the x and y values by adding a tuple to the coordinates.
-public func += (inout point: CGPoint, tuple: (CGFloat, CGFloat)) {
+public func += (point: CGPoint, tuple: (CGFloat, CGFloat)) {
+    var point = point
     point.x += tuple.0
     point.y += tuple.1
 }
@@ -416,7 +422,8 @@ public func - (point: CGPoint, tuple: (CGFloat, CGFloat)) -> CGPoint {
     return CGPoint(x: point.x - tuple.0, y: point.y - tuple.1)
 }
 /// Modifies the x and y values by subtracting a tuple from the coordinates.
-public func -= (inout point: CGPoint, tuple: (CGFloat, CGFloat)) {
+public func -= (point: CGPoint, tuple: (CGFloat, CGFloat)) {
+    var point = point
     point.x -= tuple.0
     point.y -= tuple.1
 }
@@ -425,7 +432,8 @@ public func * (point: CGPoint, factor: CGFloat) -> CGPoint {
     return CGPoint(x: point.x * factor, y: point.y * factor)
 }
 /// Modifies the x and y values by multiplying the coordinates with a value.
-public func *= (inout point: CGPoint, factor: CGFloat) {
+public func *= (point: CGPoint, factor: CGFloat) {
+    var point = point
     point.x *= factor
     point.y *= factor
 }
@@ -434,7 +442,8 @@ public func * (point: CGPoint, tuple: (CGFloat, CGFloat)) -> CGPoint {
     return CGPoint(x: point.x * tuple.0, y: point.y * tuple.1)
 }
 /// Modifies the x and y values by multiplying the coordinates with a tuple.
-public func *= (inout point: CGPoint, tuple: (CGFloat, CGFloat)) {
+public func *= (point: CGPoint, tuple: (CGFloat, CGFloat)) {
+    var point = point
     point.x *= tuple.0
     point.y *= tuple.1
 }
@@ -443,7 +452,8 @@ public func / (point: CGPoint, tuple: (CGFloat, CGFloat)) -> CGPoint {
     return CGPoint(x: point.x / tuple.0, y: point.y / tuple.1)
 }
 /// Modifies the x and y values by dividing the coordinates by a tuple.
-public func /= (inout point: CGPoint, tuple: (CGFloat, CGFloat)) {
+public func /= (point: CGPoint, tuple: (CGFloat, CGFloat)) {
+    var point = point
     point.x /= tuple.0
     point.y /= tuple.1
 }
@@ -452,7 +462,8 @@ public func / (point: CGPoint, factor: CGFloat) -> CGPoint {
     return CGPoint(x: point.x / factor, y: point.y / factor)
 }
 /// Modifies the x and y values by dividing the coordinates by a factor.
-public func /= (inout point: CGPoint, factor: CGFloat) {
+public func /= (point: CGPoint, factor: CGFloat) {
+    var point = point
     point.x /= factor
     point.y /= factor
 }
@@ -462,7 +473,8 @@ public func + (s1: CGSize, s2: CGSize) -> CGSize {
     return CGSize(width: s1.width + s2.width, height: s1.height + s2.height)
 }
 /// Modifies the width and height values by adding another size.
-public func += (inout s1: CGSize, s2: CGSize) {
+public func += (s1: CGSize, s2: CGSize) {
+    var s1 = s1
     s1.width += s2.width
     s1.height += s2.height
 }
@@ -471,7 +483,8 @@ public func - (s1: CGSize, s2: CGSize) -> CGSize {
     return CGSize(width: s1.width - s2.width, height: s1.height - s2.height)
 }
 /// Modifies the width and height values by subtracting another size.
-public func -= (inout s1: CGSize, s2: CGSize) {
+public func -= (s1: CGSize, s2: CGSize) {
+    var s1 = s1
     s1.width -= s2.width
     s1.height -= s2.height
 }
@@ -481,7 +494,8 @@ public func + (size: CGSize, tuple: (CGFloat, CGFloat)) -> CGSize {
     return CGSize(width: size.width + tuple.0, height: size.height + tuple.1)
 }
 /// Modifies the width and height values by adding a tuple.
-public func += (inout size: CGSize, tuple: (CGFloat, CGFloat)) {
+public func += (size: CGSize, tuple: (CGFloat, CGFloat)) {
+    var size = size
     size.width += tuple.0
     size.height += tuple.1
 }
@@ -490,7 +504,8 @@ public func - (size: CGSize, tuple: (CGFloat, CGFloat)) -> CGSize {
     return CGSize(width: size.width - tuple.0, height: size.height - tuple.1)
 }
 /// Modifies the width and height values by subtracting a tuple.
-public func -= (inout size: CGSize, tuple: (CGFloat, CGFloat)) {
+public func -= (size: CGSize, tuple: (CGFloat, CGFloat)) {
+    var size = size
     size.width -= tuple.0
     size.height -= tuple.1
 }
@@ -499,7 +514,8 @@ public func * (size: CGSize, factor: CGFloat) -> CGSize {
     return CGSize(width: size.width * factor, height: size.height * factor)
 }
 /// Modifies the width and height values by multiplying them with a factor.
-public func *= (inout size: CGSize, factor: CGFloat) {
+public func *= (size: CGSize, factor: CGFloat) {
+    var size = size
     size.width *= factor
     size.height *= factor
 }
@@ -508,7 +524,8 @@ public func * (size: CGSize, tuple: (CGFloat, CGFloat)) -> CGSize {
     return CGSize(width: size.width * tuple.0, height: size.height * tuple.1)
 }
 /// Modifies the width and height values by multiplying them with a tuple.
-public func *= (inout size: CGSize, tuple: (CGFloat, CGFloat)) {
+public func *= (size: CGSize, tuple: (CGFloat, CGFloat)) {
+    var size = size
     size.width *= tuple.0
     size.height *= tuple.1
 }
@@ -517,7 +534,8 @@ public func / (size: CGSize, factor: CGFloat) -> CGSize {
     return CGSize(width: size.width / factor, height: size.height / factor)
 }
 /// Modifies the width and height values by dividing them by a factor.
-public func /= (inout size: CGSize, factor: CGFloat) {
+public func /= (size: CGSize, factor: CGFloat) {
+    var size = size
     size.width /= factor
     size.height /= factor
 }
@@ -526,7 +544,8 @@ public func / (size: CGSize, tuple: (CGFloat, CGFloat)) -> CGSize {
     return CGSize(width: size.width / tuple.0, height: size.height / tuple.1)
 }
 /// Modifies the width and height values by dividing them by a tuple.
-public func /= (inout size: CGSize, tuple: (CGFloat, CGFloat)) {
+public func /= (size: CGSize, tuple: (CGFloat, CGFloat)) {
+    var size = size
     size.width /= tuple.0
     size.height /= tuple.1
 }
@@ -536,7 +555,8 @@ public func + (rect: CGRect, point: CGPoint) -> CGRect {
     return CGRect(origin: rect.origin + point, size: rect.size)
 }
 /// Modifies the x and y values by adding the coordinates of a point.
-public func += (inout rect: CGRect, point: CGPoint) {
+public func += (rect: CGRect, point: CGPoint) {
+    let rect = rect
     rect.origin += point
 }
 /// Returns a rect by subtracting the coordinates of a point from the origin.
@@ -544,7 +564,8 @@ public func - (rect: CGRect, point: CGPoint) -> CGRect {
     return CGRect(origin: rect.origin - point, size: rect.size)
 }
 /// Modifies the x and y values by subtracting the coordinates from a point.
-public func -= (inout rect: CGRect, point: CGPoint) {
+public func -= (rect: CGRect, point: CGPoint) {
+    let rect = rect
     rect.origin -= point
 }
 
@@ -553,7 +574,8 @@ public func + (rect: CGRect, size: CGSize) -> CGRect {
     return CGRect(origin: rect.origin, size: rect.size + size)
 }
 /// Modifies the width and height values by adding a size.
-public func += (inout rect: CGRect, size: CGSize) {
+public func += (rect: CGRect, size: CGSize) {
+    let rect = rect
     rect.size += size
 }
 /// Returns a rect by subtracting a size from the size.
@@ -561,40 +583,45 @@ public func - (rect: CGRect, size: CGSize) -> CGRect {
     return CGRect(origin: rect.origin, size: rect.size - size)
 }
 /// Modifies the width and height values by subtracting a size.
-public func -= (inout rect: CGRect, size: CGSize) {
+public func -= (rect: CGRect, size: CGSize) {
+    let rect = rect
     rect.size -= size
 }
 
 /// Returns a point by applying a transform.
 public func * (point: CGPoint, transform: CGAffineTransform) -> CGPoint {
-    return CGPointApplyAffineTransform(point, transform)
+    return point.apply(transform: transform)
 }
 /// Modifies all values by applying a transform.
-public func *= (inout point: CGPoint, transform: CGAffineTransform) {
-    point = CGPointApplyAffineTransform(point, transform)
+public func *= (point: CGPoint, transform: CGAffineTransform) {
+    var point = point
+    point = point.apply(transform: transform)
 }
 /// Returns a size by applying a transform.
 public func * (size: CGSize, transform: CGAffineTransform) -> CGSize {
-    return CGSizeApplyAffineTransform(size, transform)
+    return size.apply(transform: transform)
 }
 /// Modifies all values by applying a transform.
-public func *= (inout size: CGSize, transform: CGAffineTransform) {
-    size = CGSizeApplyAffineTransform(size, transform)
+public func *= (size: CGSize, transform: CGAffineTransform) {
+    var size = size
+    size = size.apply(transform: transform)
 }
 /// Returns a rect by applying a transform.
 public func * (rect: CGRect, transform: CGAffineTransform) -> CGRect {
-    return CGRectApplyAffineTransform(rect, transform)
+    return rect.apply(transform: transform)
 }
 /// Modifies all values by applying a transform.
-public func *= (inout rect: CGRect, transform: CGAffineTransform) {
-    rect = CGRectApplyAffineTransform(rect, transform)
+public func *= (rect: CGRect, transform: CGAffineTransform) {
+    var rect = rect
+    rect = rect.apply(transform: transform)
 }
 
 /// Returns a transform by concatenating two transforms.
 public func * (t1: CGAffineTransform, t2: CGAffineTransform) -> CGAffineTransform {
-    return CGAffineTransformConcat(t1, t2)
+    return t1.concat(t2)
 }
 /// Modifies all values by concatenating another transform.
-public func *= (inout t1: CGAffineTransform, t2: CGAffineTransform) {
-    t1 = CGAffineTransformConcat(t1, t2)
+public func *= (t1: CGAffineTransform, t2: CGAffineTransform) {
+    var t1 = t1
+    t1 = t1.concat(t2)
 }

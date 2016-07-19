@@ -39,7 +39,7 @@ public class NibView: UIView {
     // MARK: Nib Loading
 
     private func loadNib(name: String) {
-        guard let loadedView = NSBundle.mainBundle().loadNibNamed(name, owner: self, options: nil)?.first as? UIView else {
+        guard let loadedView = Bundle.mainBundle().loadNibNamed(name, owner: self, options: nil)?.first as? UIView else {
             fatalError("Failed to load nib named: \(name)")
         }
         loadedView.translatesAutoresizingMaskIntoConstraints = false

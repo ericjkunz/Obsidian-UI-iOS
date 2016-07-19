@@ -27,7 +27,7 @@ public final class MemoryCache<K: AnyObject, T: AnyObject where K: Hashable> {
 
     // MARK: Private Properties
 
-    private let cache: NSCache = {
+    private let cache: Cache = {
         let cache = NSCache()
         return cache
         }()
@@ -57,7 +57,7 @@ public final class MemoryCache<K: AnyObject, T: AnyObject where K: Hashable> {
             if let v = newValue {
                 cache.setObject(v, forKey: key)
             } else {
-                cache.removeObjectForKey(key)
+                cache.removeObject(forKey: key)
             }
         }
     }

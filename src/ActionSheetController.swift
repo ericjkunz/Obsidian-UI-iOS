@@ -113,7 +113,7 @@ private class ActionSheetPresentationController: UIPresentationController {
 
     }
 
-    private override func dismissalTransitionDidEnd(completed: Bool) {
+    private override func dismissalTransitionDidEnd(_ completed: Bool) {
         super.dismissalTransitionDidEnd(completed)
         dimmingView.removeFromSuperview()
     }
@@ -137,9 +137,9 @@ private class ActionSheetPresentationController: UIPresentationController {
 
     // MARK: Actions
 
-    private dynamic func dismissController(sender: UIGestureRecognizer) {
+    private dynamic func dismissController(_ sender: UIGestureRecognizer) {
         presentingViewController.dismissViewControllerAnimated(true) { () -> Void in
-            NSNotificationCenter.defaultCenter().postNotificationName("actionSheetDismissedByTapAbove", object: self)
+            NotificationCenter.defaultCenter().postNotificationName("actionSheetDismissedByTapAbove", object: self)
         }
     }
 
@@ -157,7 +157,7 @@ public protocol ActionSheetDelegate: class {
     - parameter actionSheet the action sheet that was dismissed
 
     */
-    func actionSheetDidDismissByTappingOutside(actionSheet: ActionSheetController)
+    func actionSheetDidDismissByTappingOutside(_ actionSheet: ActionSheetController)
 }
 
 public final class ActionSheetController: UIViewController, UIViewControllerTransitioningDelegate {
@@ -192,7 +192,7 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
     */
     public init(actions actionSheetActions: [Action]) {
-        actions = actionSheetActions.reverse()
+        actions = actionSheetActions.reversed()
         super.init(nibName: nil, bundle: nil)
         transitioningDelegate = self
         modalPresentationStyle = .Custom
@@ -282,14 +282,14 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
         view.addConstraints(verticalConstraints)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ActionSheetController.userTappedAbove), name: "actionSheetDismissedByTapAbove", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ActionSheetController.userTappedAbove), name: "actionSheetDismissedByTapAbove" as NSNotification.Name, object: nil)
     }
 
     // MARK: Actions
 
     private var selectedButton = false
 
-    private func buttonSelected(sender: UIButton) {
+    private func buttonSelected(_ sender: UIButton) {
         selectedButton = true
         if let index = buttons.indexOf(sender) {
             let action = actions[index]
@@ -305,7 +305,7 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
     // MARK: UIViewControllerTransitioningDelegate
 
-    public func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController, sourceViewController source: UIViewController) -> UIPresentationController? {
+    public func presentationControllerForPresentedViewController(_ presented: UIViewController, presentingViewController presenting: UIViewController, sourceViewController source: UIViewController) -> UIPresentationController? {
         let controller = ActionSheetPresentationController(presentedViewController: presented, presentingViewController: presenting)
         controller.height = actions.reduce(0) { $0 + $1.height }
         return controller

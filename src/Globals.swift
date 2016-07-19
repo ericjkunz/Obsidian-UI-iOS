@@ -20,7 +20,7 @@ Returns a localized string from the main bundle's default localized strings tabl
 
 */
 public func L(key: String) -> String {
-    return NSLocalizedString(key, tableName: nil, bundle: NSBundle.mainBundle(), comment: "")
+    return NSLocalizedString(key, tableName: nil, bundle: Bundle.main, comment: "")
 }
 
 /// Returns a random UIColor
@@ -68,7 +68,7 @@ internal struct Constants {
 internal let NibCache = MemoryCache<NSString, UINib>(identifier: Constants.NibCacheName)
 
 /// Return the index of an element matching the passed predicate in the given sequence, or nil if the element is not found in the sequence.
-public func search<C: CollectionType>(source: C, predicate: (C.Generator.Element) -> Bool) -> C.Index? {
+public func search<C: Collection>(source: C, predicate: (C.Iterator.Element) -> Bool) -> C.Index? {
     for i in source.indices {
         if predicate(source[i]) {
             return i
@@ -78,7 +78,7 @@ public func search<C: CollectionType>(source: C, predicate: (C.Generator.Element
 }
 
 /// Prints a collection in a human-readable format
-public func print<A: CollectionType>(collection: A ) {
+public func print<A: Collection>(collection: A ) {
     let sz = collection.count
     if sz == 0 {
         Swift.print("[]")
@@ -111,14 +111,14 @@ public func rand(min: CGFloat, max: CGFloat) -> CGFloat {
 }
 
 /// Returns a closure that calls the passed function once it has been left alone for the passed delay
-public func debounce(delay: NSTimeInterval, function: VoidFunction) -> VoidFunction {
-    let queue = dispatch_get_main_queue()
+public func debounce(delay: TimeInterval, function: VoidFunction) -> VoidFunction {
+    let queue = DispatchQueue.main
     var lastFireTime: dispatch_time_t = 0
     let dispatchDelay = Int64(delay * Double(NSEC_PER_SEC))
     return {
-        lastFireTime = dispatch_time(DISPATCH_TIME_NOW, 0)
-        let fireTime = dispatch_time(DISPATCH_TIME_NOW, dispatchDelay)
-        dispatch_after(fireTime, queue) {
+        lastFireTime = DispatchTime.now(dispatch_time_t(DispatchTime.now), 0)
+        let fireTime = DispatchTime.now(dispatch_time_t(DispatchTime.now), dispatchDelay)
+        fireTime.after(when: queue) {
             let now = dispatch_time(DISPATCH_TIME_NOW, 0)
             let when = dispatch_time(lastFireTime, dispatchDelay)
             if now >= when {
@@ -130,8 +130,8 @@ public func debounce(delay: NSTimeInterval, function: VoidFunction) -> VoidFunct
 
 /// Calls a closure after a time delay
 public func delay(delay: Double, closure:()->()) {
-    dispatch_after(
-        dispatch_time(
-            DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))
-        ), dispatch_get_main_queue(), closure)
+    dispatch_time(
+            dispatch_time_t(DISPATCH_TIME_NOW), Int64(delay * Double(NSEC_PER_SEC))
+        ).after(
+        DispatchTime.nowwhen: DispatchQueue.main(), execute: closure)
 }

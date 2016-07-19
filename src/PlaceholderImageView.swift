@@ -166,7 +166,7 @@ public class PlaceholderImageView: UIView, URLImageViewDelegate {
 
     // MARK: URLImageViewDelegate
 
-    func loadedImage(image image: UIImage?, error: NSError?) {
+    func loadedImage(image: UIImage?, error: NSError?) {
         if let loadedImage = image {
             self.image = loadedImage
             placeholderView?.hidden = true

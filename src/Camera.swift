@@ -153,22 +153,22 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     }
     
     private func addVideoInput() {
-        for device in AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo) {
-            if device.position == AVCaptureDevicePosition.Back {
+        for device in AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo) {
+            if device.position == AVCaptureDevicePosition.back {
                 backCamera = device as? AVCaptureDevice
-            } else if device.position == AVCaptureDevicePosition.Front {
+            } else if device.position == AVCaptureDevicePosition.front {
                 frontCamera = device as? AVCaptureDevice
             }
         }
         
         if !useFrontCamera {
             if backCamera == nil {
-                backCamera = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+                backCamera = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
             }
             currentCamera = backCamera
         } else {
             if frontCamera == nil {
-                frontCamera = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+                frontCamera = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
             }
             currentCamera = frontCamera
         }
@@ -189,7 +189,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     }
     
     private func addAudioInput() {
-        let audioDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeAudio)
+        let audioDevice = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeAudio)
         
         let audioInput = try? AVCaptureDeviceInput(device: audioDevice)
         
@@ -298,7 +298,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
      */
     public func focusAtPoint(point: CGPoint) {
         if let camera = currentCamera {
-            if camera.focusPointOfInterestSupported {
+            if camera.isFocusPointOfInterestSupported {
                 camera.focusPointOfInterest = point
             }
         }
@@ -312,7 +312,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
      */
     public func exposeAtPoint(point: CGPoint) {
         if let camera = currentCamera {
-            if camera.exposurePointOfInterestSupported {
+            if camera.isExposurePointOfInterestSupported {
                 camera.exposurePointOfInterest = point
             }
         }
@@ -361,7 +361,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
      
      */
     public func captureImage(completion: ((capturedImage: UIImage) -> Void)?) {
-        stillImageOutput.captureStillImageAsynchronouslyFromConnection(stillImageOutput.connectionWithMediaType(AVMediaTypeVideo), completionHandler: { (sampleBuffer, error) -> Void in
+        stillImageOutput.captureStillImageAsynchronously(from: stillImageOutput.connection(withMediaType: AVMediaTypeVideo), completionHandler: { (sampleBuffer, error) -> Void in
             if sampleBuffer != nil {
                 
                 let data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
@@ -382,16 +382,16 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     public func startRecording() {
         let outputURL = NSURL(fileURLWithPath: outputPath)
         
-        let fileManager = NSFileManager()
-        if fileManager.fileExistsAtPath(outputPath) {
+        let fileManager = FileManager()
+        if fileManager.fileExists(atPath: outputPath) {
             do {
-                try fileManager.removeItemAtPath(outputPath)
+                try fileManager.removeItem(atPath: outputPath)
             } catch {
                 
             }
         }
         
-        movieFileOutput.startRecordingToOutputFileURL(outputURL, recordingDelegate: self)
+        movieFileOutput.startRecording(toOutputFileURL: outputURL as URL!, recordingDelegate: self)
     }
     
     public func stopRecording() {

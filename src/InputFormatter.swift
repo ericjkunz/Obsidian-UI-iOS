@@ -42,9 +42,9 @@ class InputFormatter {
     typealias validChecker = ((input: String) -> Bool)?
     var formattingType = InputFormattingType.None
 
-    private lazy var numberFormatter = NSNumberFormatter()
-    private lazy var currencyFormatter = NSNumberFormatter()
-    private lazy var dateFormatter = NSDateFormatter()
+    private lazy var numberFormatter = NumberFormatter()
+    private lazy var currencyFormatter = NumberFormatter()
+    private lazy var dateFormatter = DateFormatter()
 
     init(type: InputFormattingType) {
         formattingType = type
@@ -237,7 +237,7 @@ class InputFormatter {
 
     private func validateCurrency(text: String) -> Bool {
         currencyFormatter.numberStyle = .CurrencyStyle
-        let number = currencyFormatter.numberFromString(text) ?? 0
+        let number = currencyFormatter.number(from: text) ?? 0
 
         return number.doubleValue > 0.0
     }
@@ -262,9 +262,9 @@ class InputFormatter {
     }
 
     private func isDigitOrCharacter(additionalCharacters: String, character: Character) -> Bool {
-        let digits = NSCharacterSet.decimalDigitCharacterSet()
+        let digits = NSCharacterSet.decimalDigits
         let fullSet = NSMutableCharacterSet(charactersInString: additionalCharacters)
-        fullSet.formUnionWithCharacterSet(digits)
+        fullSet.formUnion(with: digits)
 
         if isCharacter(character, aMemberOf: fullSet) {
             return true
@@ -277,7 +277,7 @@ class InputFormatter {
             return (text, cursorPosition)
         }
 
-        let newText = (text as NSString).stringByReplacingCharactersInRange(range, withString: newInput)
+        let newText = (text as NSString).replacingCharacters(in: range, with: newInput)
         return (newText, cursorPosition + (newText.length - text.length))
     }
 
@@ -285,13 +285,13 @@ class InputFormatter {
         var originalCursorPosition = cursorPosition
         let theText = text
         var digitsOnlyString = ""
-        for var i = 0; i < theText.length; i++ {
+        for i in 0 ..< theText.length {
             let characterToAdd = theText[i]
             if isDigit(characterToAdd) {
                 let stringToAdd = String(characterToAdd)
-                digitsOnlyString.appendContentsOf(stringToAdd)
+                digitsOnlyString.append(stringToAdd)
             } else if i < cursorPosition {
-                originalCursorPosition--
+                originalCursorPosition -= 1
             }
         }
 
@@ -302,19 +302,19 @@ class InputFormatter {
         var stringWithAddedChars = ""
         var newCursorPosition = cursorPosition
 
-        for var i = 0; i < text.length; i++ {
+        for i in 0 ..< text.length {
             for (index, char) in characters {
                 if index == i {
                     stringWithAddedChars.append(char)
                     if i < cursorPosition {
-                        newCursorPosition++
+                        newCursorPosition += 1
                     }
                 }
             }
 
             let characterToAdd = text[i]
             let stringToAdd = String(characterToAdd)
-            stringWithAddedChars.appendContentsOf(stringToAdd)
+            stringWithAddedChars.append(stringToAdd)
         }
 
         return (stringWithAddedChars, newCursorPosition)

@@ -133,15 +133,15 @@ public class FeatureDetection {
         faceRect.origin.y *= heightScaleBy
 
         if mirrored {
-            faceRect = CGRectOffset(faceRect, previewBox.origin.x + previewBox.size.width - faceRect.size.width - (faceRect.origin.x * 2), previewBox.origin.y)
+            faceRect = faceRect.offsetBy(dx: previewBox.origin.x + previewBox.size.width - faceRect.size.width - (faceRect.origin.x * 2), dy: previewBox.origin.y)
         } else {
-            faceRect = CGRectOffset(faceRect, previewBox.origin.x, previewBox.origin.y)
+            faceRect = faceRect.offsetBy(dx: previewBox.origin.x, dy: previewBox.origin.y)
         }
 
         return faceRect
     }
 
-    private func videoPreviewBox(gravity gravity: String, frameSize: CGSize, apertureSize: CGSize) -> CGRect {
+    private func videoPreviewBox(gravity: String, frameSize: CGSize, apertureSize: CGSize) -> CGRect {
         let apertureRatio = apertureSize.height / apertureSize.width
         let viewRatio = frameSize.width / frameSize.height
 

@@ -18,7 +18,7 @@ public protocol VideoPlayerDelegate: class {
     - parameter player: The player that triggered the event
 
     */
-    func playerFinished(player: VideoPlayer)
+    func playerFinished(_ player: VideoPlayer)
 
     /**
     A method called as the video player's progress advances
@@ -27,7 +27,7 @@ public protocol VideoPlayerDelegate: class {
     - parameter progress: The current progress of the player
 
     */
-    func playerProgressed(player: VideoPlayer, progress: Float)
+    func playerProgressed(_ player: VideoPlayer, progress: Float)
 }
 
 public final class VideoPlayer: UIView {
@@ -51,10 +51,10 @@ public final class VideoPlayer: UIView {
     /// Whether or not the player is muted
     public var muted: Bool {
         get {
-            return player?.muted ?? false
+            return player?.isMuted ?? false
         }
         set {
-            player?.muted = newValue
+            player?.isMuted = newValue
         }
     }
 
@@ -100,7 +100,7 @@ public final class VideoPlayer: UIView {
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         removeTimeObserver()
     }
 
@@ -124,18 +124,18 @@ public final class VideoPlayer: UIView {
         }
     }
 
-    private func configurePlayerWithItem(item: AVPlayerItem) {
+    private func configurePlayerWithItem(_ item: AVPlayerItem) {
 
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
 
         if let thePlayer = player {
-            thePlayer.replaceCurrentItemWithPlayerItem(item)
+            thePlayer.replaceCurrentItem(with: item)
         } else {
             player = AVPlayer(playerItem: item)
             playerLayer.player = player
         }
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "playbackEnded:", name: AVPlayerItemDidPlayToEndTimeNotification, object: item)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoPlayer.playbackEnded(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
 
     }
 
@@ -143,7 +143,7 @@ public final class VideoPlayer: UIView {
 
     /// Unloads the currently loaded asset (if necessary)
     public func unload() {
-        player?.replaceCurrentItemWithPlayerItem(nil)
+        player?.replaceCurrentItem(with: nil)
         loaded = false
     }
 
@@ -154,8 +154,8 @@ public final class VideoPlayer: UIView {
     - parameter loops: The number of times the asset's playback should loop
 
     */
-    public func load(url: NSURL, loops: Int = 1) {
-        let asset = AVURLAsset(URL: url, options: [ AVURLAssetPreferPreciseDurationAndTimingKey: true ])
+    public func load(_ url: URL, loops: Int = 1) {
+        let asset = AVURLAsset(url: url, options: [ AVURLAssetPreferPreciseDurationAndTimingKey: true ])
         let composition = AVMutableComposition(asset: asset, loops: loops)
         let playerItem = AVPlayerItem(asset: composition)
         configurePlayerWithItem(playerItem)
@@ -171,17 +171,17 @@ public final class VideoPlayer: UIView {
                 return
             }
 
-            if thePlayer.status == .ReadyToPlay {
+            if thePlayer.status == .readyToPlay {
                 removeTimeObserver()
                 thePlayer.play()
-                thePlayer.addPeriodicTimeObserverForInterval(VideoPlayerConstants.ProgressTimeInterval, queue: dispatch_get_main_queue(), usingBlock: playbackTimeChanged)
+                thePlayer.addPeriodicTimeObserver(forInterval: VideoPlayerConstants.ProgressTimeInterval, queue: DispatchQueue.main, using: playbackTimeChanged)
             }
         }
     }
 
     /// Rewinds the player to the beginning of its player item
     public func rewind() {
-        player?.seekToTime(kCMTimeZero)
+        player?.seek(to: kCMTimeZero)
     }
 
     /// Pauses the currently playing asset (if necessary)
@@ -201,7 +201,7 @@ public final class VideoPlayer: UIView {
         }
     }
 
-    private func playbackTimeChanged(time: CMTime) {
+    private func playbackTimeChanged(_ time: CMTime) {
         if let item = player?.currentItem {
             let durationSeconds = CMTimeGetSeconds(item.duration)
             let currentSeconds = CMTimeGetSeconds(time)
@@ -212,7 +212,7 @@ public final class VideoPlayer: UIView {
 
     // MARK: Notifications
 
-    private dynamic func playbackEnded(note: NSNotification) {
+    private dynamic func playbackEnded(_ note: Notification) {
         delegate?.playerFinished(self)
     }
 

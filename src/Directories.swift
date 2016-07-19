@@ -10,8 +10,8 @@ import Foundation
 
 public struct Directories {
 
-    private static func findSandboxedDirectory(directory: NSSearchPathDirectory) -> String! {
-        let candidates = NSSearchPathForDirectoriesInDomains(directory, .UserDomainMask, true)
+    private static func findSandboxedDirectory(directory: FileManager.SearchPathDirectory) -> String! {
+        let candidates = NSSearchPathForDirectoriesInDomains(directory, .userDomainMask, true)
         return candidates.first
     }
 

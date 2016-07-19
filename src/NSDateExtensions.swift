@@ -17,19 +17,19 @@ public extension NSDate {
 
         let date = self
 
-        let calendar = NSCalendar.currentCalendar()
-        let unitFlags: NSCalendarUnit = [NSCalendarUnit.Minute, NSCalendarUnit.Hour, NSCalendarUnit.Day, NSCalendarUnit.WeekOfYear, NSCalendarUnit.Month, NSCalendarUnit.Year, NSCalendarUnit.Second]
+        let calendar = Calendar.current
+        let unitFlags: Calendar.Unit = [Calendar.Unit.minute, Calendar.Unit.hour, Calendar.Unit.day, Calendar.Unit.weekOfYear, Calendar.Unit.month, Calendar.Unit.year, Calendar.Unit.second]
         let now = NSDate()
-        let earliest = now.earlierDate(date)
-        let latest = now.laterDate(date)
-        let components = calendar.components(unitFlags, fromDate: earliest, toDate: latest, options: [])
+        let earliest = now.earlierDate(date as Date)
+        let latest = now.laterDate(date as Date)
+        let components = calendar.components(unitFlags, from: earliest, to: latest, options: [])
 
         if components.year >= 2 {
             return "\(components.year)y"
         } else if components.year >= 1 {
             return "1y"
         } else if components.month >= 2 {
-            return "\(components.month * 4)w"
+            return "\(components.month! * 4)w"
         } else if components.month >= 1 {
             return "4w"
         } else if components.weekOfYear >= 2 {
@@ -59,10 +59,10 @@ extension NSDate: Comparable { }
 
 /// :nodoc:
 public func == (lhs: NSDate, rhs: NSDate) -> Bool {
-    return lhs === rhs || lhs.compare(rhs) == .OrderedSame
+    return lhs === rhs || lhs.compare(rhs as Date) == .orderedSame
 }
 
 /// :nodoc:
 public func < (lhs: NSDate, rhs: NSDate) -> Bool {
-    return lhs.compare(rhs) == .OrderedAscending
+    return lhs.compare(rhs as Date) == .orderedAscending
 }

@@ -17,7 +17,7 @@ public extension UIImage {
         let bounds = CGRect(origin: CGPoint.zero, size: size)
         let view = UIImageView(frame: bounds)
         view.image = self
-        view.contentMode = .Center
+        view.contentMode = .center
         return view
     }
 
@@ -29,12 +29,12 @@ internal extension UIImage {
         return decodedImage(scale: scale)
     }
 
-    internal func decodedImage(scale scale: CGFloat) -> UIImage? {
+    internal func decodedImage(scale: CGFloat) -> UIImage? {
 
         let imageRef = CGImage
 
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
 
         let context = CGBitmapContextCreate(nil, CGImageGetWidth(imageRef), CGImageGetHeight(imageRef), 8, 0, colorSpace, bitmapInfo.rawValue)
 
@@ -52,11 +52,11 @@ internal extension UIImage {
     }
     
     func cropToBounds(rect: CGRect) -> UIImage? {
-        guard let cg = self.CGImage else {
+        guard let cg = self.cgImage else {
             return nil
         }
         
-        guard let cropped = CGImageCreateWithImageInRect(cg, rect) else {
+        guard let cropped = cg.cropping(to: rect) else {
             return nil
         }
         
@@ -64,13 +64,13 @@ internal extension UIImage {
     }
     
     func maskWithImage(mask: UIImage) -> UIImage? {
-        let ctx = CGBitmapContextCreate(nil, Int(self.size.width), Int(self.size.height), CGImageGetBitsPerComponent(self.CGImage), 0, CGColorSpaceCreateDeviceRGB(), CGImageAlphaInfo.PremultipliedLast.rawValue)
+        let ctx = CGContext(data: nil, width: Int(self.size.width), height: Int(self.size.height), bitsPerComponent: self.cgImage!.bitsPerComponent, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
         
         let imageRect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
-        CGContextClipToMask(ctx, imageRect, mask.CGImage)
-        CGContextDrawImage(ctx, imageRect, self.CGImage)
+        ctx!.clipToMask(imageRect, mask: mask.cgImage!)
+        ctx!.draw(in: imageRect, image: self.cgImage!)
         
-        if let resultImage = CGBitmapContextCreateImage(ctx) {
+        if let resultImage = ctx!.makeImage() {
             return UIImage(CGImage: resultImage)
         }
         else {
@@ -79,17 +79,17 @@ internal extension UIImage {
     }
     
     func resizeImage(size: CGSize) -> UIImage {
-        let size = CGSizeApplyAffineTransform(self.size, CGAffineTransformMakeScale(size.width / self.size.width, size.height / self.size.height))
+        let size = self.size.apply(transform: CGAffineTransform(scaleX: size.width / self.size.width, y: size.height / self.size.height))
         let hasAlpha = false
         let scale: CGFloat = 0.0 // Automatically use scale factor of main screen
         
         UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        self.drawInRect(CGRect(origin: CGPointZero, size: size))
+        self.draw(in: CGRect(origin: CGPointZero, size: size))
         
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        return scaledImage
+        return scaledImage!
     }
     
 }

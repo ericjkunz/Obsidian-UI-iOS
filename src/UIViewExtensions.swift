@@ -20,13 +20,13 @@ public extension UIView {
 
     */
     public func applyBorder(width: CGFloat, color: UIColor) {
-        layer.borderColor = color.CGColor
+        layer.borderColor = color.cgColor
         layer.borderWidth = width
     }
 
     /// Removes the border from the receiver's underlying CALayer
     public func removeBorder() {
-        layer.borderColor = UIColor.clearColor().CGColor
+        layer.borderColor = UIColor.clear().cgColor
         layer.borderWidth = 0.0
     }
 

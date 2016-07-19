@@ -50,7 +50,7 @@ public class CountryPicker: PickerInputView {
     public var countryName: String? {
         didSet {
             if let name = countryName {
-                if let index = alphabeticalCountryNames.indexOf(name) {
+                if let index = alphabeticalCountryNames.index(of: name) {
                     pickerView.selectRow(index, inComponent: 0, animated: true)
                     textField?.text = countryName
                 } else {
@@ -69,11 +69,11 @@ public class CountryPicker: PickerInputView {
     }
 
     func loadCountries() {
-        let currentLocale = NSLocale.currentLocale()
-        let countryCodes = NSLocale.ISOCountryCodes()
+        let currentLocale = Locale.current
+        let countryCodes = Locale.isoCountryCodes
 
         for countryCode in countryCodes {
-            let countryName = currentLocale.displayNameForKey(NSLocaleCountryCode, value: countryCode)
+            let countryName = currentLocale.displayName(forKey: Locale.Key.countryCode, value: countryCode)
             if let name = countryName {
                 codesAndCountries[countryCode] = name
             }
@@ -97,9 +97,9 @@ public class CountryPicker: PickerInputView {
     /// Sets the picker view to the country of the current user's locale
     public func selectCurrentUserLocale() {
         
-        let currentLocale = NSLocale.currentLocale()
+        let currentLocale = Locale.current
         
-        guard let currentCountryCode = currentLocale.objectForKey(NSLocaleCountryCode) as? String else {
+        guard let currentCountryCode = currentLocale.object(forKey: Locale.Key.countryCode) as? String else {
             return
         }
         
@@ -117,7 +117,7 @@ public class CountryPicker: PickerInputView {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = NSTextAlignment.Center
         let textAttributes = [NSForegroundColorAttributeName : UIColor.blackColor(), NSParagraphStyleAttributeName : paragraphStyle]
-        let attributedTitle = NSAttributedString(string: title, attributes: textAttributes)
+        let attributedTitle = AttributedString(string: title, attributes: textAttributes)
 
         let label = UILabel()
         label.attributedText = attributedTitle

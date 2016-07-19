@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 internal final class ActivityIndicatorView: UIView {
 
@@ -16,10 +17,10 @@ internal final class ActivityIndicatorView: UIView {
 
         internal let backgroundColor: UIColor
         internal let images: [UIImage]
-        internal let duration: NSTimeInterval
+        internal let duration: TimeInterval
         internal let spaceAboveCenter: CGFloat
 
-        internal init(backgroundColor: UIColor, images: [UIImage], duration: NSTimeInterval, spaceAboveCenter: CGFloat) {
+        internal init(backgroundColor: UIColor, images: [UIImage], duration: TimeInterval, spaceAboveCenter: CGFloat) {
             self.backgroundColor = backgroundColor
             self.images = images
             self.duration = duration
@@ -47,20 +48,20 @@ internal final class ActivityIndicatorView: UIView {
         addSubview(imageView)
 
         var constraints = [
-            NSLayoutConstraint(item: imageView, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: imageView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1.0, constant: 0.0),
         ]
 
         if config.spaceAboveCenter != 0.0 {
             constraints.append(
-                NSLayoutConstraint(item: imageView, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1.0, constant: -config.spaceAboveCenter)
+                NSLayoutConstraint(item: imageView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1.0, constant: -config.spaceAboveCenter)
             )
         } else {
             constraints.append(
-                NSLayoutConstraint(item: imageView, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1.0, constant: 0.0)
+                NSLayoutConstraint(item: imageView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1.0, constant: 0.0)
             )
         }
 
-        constraints.forEach { $0.active = true }
+        constraints.forEach { $0.isActive = true }
 
     }
 

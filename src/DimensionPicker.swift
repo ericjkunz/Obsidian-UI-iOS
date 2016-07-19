@@ -25,7 +25,7 @@ public struct DimensionUnit: Equatable {
     let name: String
 
     /// Used for displaying the value with unit.
-    let unit: NSLengthFormatterUnit
+    let unit: LengthFormatter.Unit
 
     /// The smallest selectable value in the picker.
     let minimumDimension: Double
@@ -63,7 +63,7 @@ public struct DimensionUnit: Equatable {
             var wholeParts = [String]()
             let minimum = minimumDimension, maximum = maximumDimension
 
-            for var part = minimum; part < maximum; part++ {
+            for part in minimum ..< maximum {
                 wholeParts.append("\(Int(part))")
             }
 
@@ -94,13 +94,13 @@ public class DimensionPicker: PickerInputView {
     public var pickerDelegate: DimensionPickerDelegate?
 
     /// The dimensions provided in the picker. Initialized with inches and centimeters. Dimension values can be added or removed.
-    public var dimensions = [DimensionUnit(name: "Inches", unit: NSLengthFormatterUnit.Inch, minimumDimension: 0, maximumDimension: 60, amountInOneInch: 1, fractionalStepValue: 0.125), DimensionUnit(name: "Centimeters", unit: NSLengthFormatterUnit.Centimeter, minimumDimension: 0, maximumDimension: 152, amountInOneInch: 2.54, fractionalStepValue: 0.1)]
+    public var dimensions = [DimensionUnit(name: "Inches", unit: LengthFormatter.Unit.inch, minimumDimension: 0, maximumDimension: 60, amountInOneInch: 1, fractionalStepValue: 0.125), DimensionUnit(name: "Centimeters", unit: LengthFormatter.Unit.centimeter, minimumDimension: 0, maximumDimension: 152, amountInOneInch: 2.54, fractionalStepValue: 0.1)]
 
     /// The current unit of the picker. Setting this will change the selected unit of the picker.
     public var selectedUnit: DimensionUnit? {
         didSet {
             if let unit = selectedUnit {
-                if let index = dimensions.indexOf(unit) {
+                if let index = dimensions.index(of: unit) {
                     pickerView.selectRow(index, inComponent: 0, animated: true)
                 }
             }
@@ -128,7 +128,7 @@ public class DimensionPicker: PickerInputView {
     private var selectedDimensionInches: Double?
     private var wholePart = 0
     private var fractionalPart = 0.0
-    private var dimensionFormatterUnit: NSLengthFormatterUnit
+    private var dimensionFormatterUnit: LengthFormatter.Unit
     private var previousDimension: DimensionUnit?
 
     convenience init() {
@@ -155,11 +155,11 @@ public class DimensionPicker: PickerInputView {
         super.layoutSubviews()
     }
 
-    private var dimensionFormatter = NSLengthFormatter()
+    private var dimensionFormatter = LengthFormatter()
 
     private func updateText() {
         if let unit = selectedUnit?.unit {
-            let dimensionString = dimensionFormatter.stringFromValue(selectedDimension, unit: unit)
+            let dimensionString = dimensionFormatter.string(fromValue: selectedDimension, unit: unit)
             textField?.text = dimensionString
         }
     }
@@ -203,7 +203,7 @@ public class DimensionPicker: PickerInputView {
         }
 
         let textAttributes = [NSParagraphStyleAttributeName : paragraphStyle]
-        let attributedTitle = NSAttributedString(string: rowTitle, attributes: textAttributes)
+        let attributedTitle = AttributedString(string: rowTitle, attributes: textAttributes)
 
         let label = UILabel()
         label.attributedText = attributedTitle

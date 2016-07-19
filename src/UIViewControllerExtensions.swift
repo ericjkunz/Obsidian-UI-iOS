@@ -18,7 +18,7 @@ extension UIViewController {
 
     */
     public func presentFormSheet(controller: UIViewController, navigationController: UINavigationController? = UINavigationController()) {
-        navigationController?.modalPresentationStyle = .FormSheet
+        navigationController?.modalPresentationStyle = .formSheet
         navigationController?.viewControllers = [controller]
         (navigationController ?? controller).present(self)
     }
@@ -34,7 +34,7 @@ extension UIViewController {
         navigationController?.viewControllers = [controller]
         let presented = navigationController ?? controller
         presented.transitioningDelegate = DrawerTransitioningDelegate(side)
-        presented.modalPresentationStyle = .Custom
+        presented.modalPresentationStyle = .custom
         presented.present(self)
     }
 
@@ -45,7 +45,7 @@ extension UIViewController {
 
     */
     public func present(sourceController: UIViewController) {
-        sourceController.presentViewController(self, animated: true, completion: nil)
+        sourceController.present(self, animated: true, completion: nil)
     }
 
     /**
@@ -59,13 +59,13 @@ extension UIViewController {
 
     */
     public func prompt(title: String, message: String?, acceptButtonTitle: String = L("OK"), placeholder: String? = nil, completion: (value: String?) -> ()) {
-        let controller = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        controller.addTextFieldWithConfigurationHandler { (field) -> Void in
+        controller.addTextField { (field) -> Void in
             field.placeholder = placeholder
         }
 
-        let ok = UIAlertAction(title: acceptButtonTitle, style: .Default) { [weak controller] (action) -> Void in
+        let ok = UIAlertAction(title: acceptButtonTitle, style: .default) { [weak controller] (action) -> Void in
             if let field = controller?.textFields?[0] {
                 completion(value: field.text)
             }
@@ -92,9 +92,9 @@ extension UIViewController {
     - parameter completion: A closure triggered when the user has dismissed the alert
 
     */
-    public func confirm(title: String = L("Are You Sure?"), message: String?, acceptButtonTitle: String = L("Confirm"), acceptButtonStyle: UIAlertActionStyle = .Destructive, completion: (confirmed: Bool) -> ()) {
+    public func confirm(title: String = L("Are You Sure?"), message: String?, acceptButtonTitle: String = L("Confirm"), acceptButtonStyle: UIAlertActionStyle = .destructive, completion: (confirmed: Bool) -> ()) {
 
-        let controller = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         let confirm = UIAlertAction(title: acceptButtonTitle, style: acceptButtonStyle) { action in
             completion(confirmed: true)
@@ -134,7 +134,7 @@ extension UIViewController {
     - parameter identifier: An identifier for this configuration, to be used later when calling showActivityIndicator().  If omitted, a default identifier will be used.
 
     */
-    public class func registerActivityIndicatorAnimation(backgroundColor backgroundColor: UIColor, images: [UIImage], duration: NSTimeInterval, identifier: String = Constants.DefaultIndicatorName, spaceAboveCenter: CGFloat = 0) {
+    public class func registerActivityIndicatorAnimation(backgroundColor: UIColor, images: [UIImage], duration: TimeInterval, identifier: String = Constants.DefaultIndicatorName, spaceAboveCenter: CGFloat = 0) {
         indicatorConfigs[identifier] = ActivityIndicatorView.Config(backgroundColor: backgroundColor, images: images, duration: duration, spaceAboveCenter: spaceAboveCenter)
     }
 
@@ -166,18 +166,18 @@ extension UIViewController {
         let constraintTarget = constraint ?? view
 
         let constraints = [
-            NSLayoutConstraint(item: activityIndicator, attribute: .Top, relatedBy: .Equal, toItem: constraintTarget, attribute: .Top, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: activityIndicator, attribute: .Left, relatedBy: .Equal, toItem: constraintTarget, attribute: .Left, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: activityIndicator, attribute: .Width, relatedBy: .Equal, toItem: constraintTarget, attribute: .Width, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: activityIndicator, attribute: .Height, relatedBy: .Equal, toItem: constraintTarget, attribute: .Height, multiplier: 1.0, constant: 0.0)
+            NSLayoutConstraint(item: activityIndicator, attribute: .top, relatedBy: .equal, toItem: constraintTarget, attribute: .top, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: activityIndicator, attribute: .left, relatedBy: .equal, toItem: constraintTarget, attribute: .left, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: activityIndicator, attribute: .width, relatedBy: .equal, toItem: constraintTarget, attribute: .width, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: activityIndicator, attribute: .height, relatedBy: .equal, toItem: constraintTarget, attribute: .height, multiplier: 1.0, constant: 0.0)
         ]
 
-        constraints.forEach { $0.active = true }
+        constraints.forEach { $0.isActive = true }
 
         activityIndicator.startAnimating()
 
         if let scrollView = view as? UIScrollView where disableScrollingIfNeeded {
-            scrollView.scrollEnabled = false
+            scrollView.isScrollEnabled = false
         }
 
         // Force Z position to be very high, mainly for table views
@@ -194,7 +194,7 @@ extension UIViewController {
     public func hideActivityIndicator(enableScrollingIfNeeded: Bool = true) {
 
         if let scrollView = view as? UIScrollView where enableScrollingIfNeeded {
-            scrollView.scrollEnabled = true
+            scrollView.isScrollEnabled = true
         }
 
         while let indicator = findActivityIndicator() {

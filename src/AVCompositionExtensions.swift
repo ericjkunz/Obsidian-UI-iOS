@@ -27,7 +27,7 @@ public extension AVMutableComposition {
 
         for _ in 0..<loops {
             do {
-                try insertTimeRange(editRange, ofAsset: asset, atTime: duration)
+                try insertTimeRange(editRange, of: asset, at: duration)
             } catch _ {
             }
         }

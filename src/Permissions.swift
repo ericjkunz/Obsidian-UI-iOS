@@ -35,11 +35,11 @@ public class Permissions {
     public func authorizationStatusContacts() -> PermissionStatus {
         let status = ABAddressBookGetAuthorizationStatus()
         switch status {
-        case .Authorized:
+        case .authorized:
             return .Authorized
-        case .Restricted, .Denied:
+        case .restricted, .denied:
             return .Unauthorized
-        case .NotDetermined:
+        case .notDetermined:
             return .Unknown
         }
     }
@@ -78,11 +78,11 @@ public class Permissions {
 
         let status = CLLocationManager.authorizationStatus()
         switch status {
-        case .AuthorizedAlways:
+        case .authorizedAlways:
             return .Authorized
-        case .Restricted, .Denied:
+        case .restricted, .denied:
             return .Unauthorized
-        case .NotDetermined, .AuthorizedWhenInUse:
+        case .notDetermined, .authorizedWhenInUse:
             return .Unknown
         }
     }
@@ -115,11 +115,11 @@ public class Permissions {
 
         let status = CLLocationManager.authorizationStatus()
         switch status {
-        case .AuthorizedWhenInUse, .AuthorizedAlways:
+        case .authorizedWhenInUse, .authorizedAlways:
             return .Authorized
-        case .Restricted, .Denied:
+        case .restricted, .denied:
             return .Unauthorized
-        case .NotDetermined:
+        case .notDetermined:
             return .Unknown
         }
     }
@@ -146,11 +146,11 @@ public class Permissions {
 
     /// The authorization status of the app receiving notifications.
     public func authorizationStatusNotifications() -> PermissionStatus {
-        let settings = UIApplication.sharedApplication().currentUserNotificationSettings()
-        if settings?.types != UIUserNotificationType.None {
+        let settings = UIApplication.shared().currentUserNotificationSettings()
+        if settings?.types != UIUserNotificationType.none {
             return .Authorized
         } else {
-            if NSUserDefaults.standardUserDefaults().boolForKey(AskedForNotificationsDefaultsKey) {
+            if UserDefaults.standard.bool(forKey: AskedForNotificationsDefaultsKey) {
                 return .Unauthorized
             } else {
                 return .Unknown
@@ -183,11 +183,11 @@ public class Permissions {
     public func authorizationStatusPhotos() -> PermissionStatus {
         let status = PHPhotoLibrary.authorizationStatus()
         switch status {
-        case .Authorized:
+        case .authorized:
             return .Authorized
-        case .Denied, .Restricted:
+        case .denied, .restricted:
             return .Unauthorized
-        case .NotDetermined:
+        case .notDetermined:
             return .Unknown
         }
     }
@@ -217,13 +217,13 @@ public class Permissions {
 
     /// The authorization status for use of the camera.
     public func authorizationStatusCamera() -> PermissionStatus {
-        let status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
+        let status = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         switch status {
-        case .Authorized:
+        case .authorized:
             return .Authorized
-        case .Denied, .Restricted:
+        case .denied, .restricted:
             return .Unauthorized
-        case .NotDetermined:
+        case .notDetermined:
             return .Unknown
         }
     }
@@ -240,7 +240,7 @@ public class Permissions {
         let status = authorizationStatusCamera()
         switch status {
         case .Unknown:
-            AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { (granted: Bool) -> Void in
+            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { (granted: Bool) -> Void in
 
             })
             return true
@@ -258,8 +258,8 @@ public class Permissions {
     */
     public func openAppSettings() {
         let url = NSURL(string: UIApplicationOpenSettingsURLString)!
-        if UIApplication.sharedApplication().canOpenURL(url) {
-            UIApplication.sharedApplication().openURL(url)
+        if UIApplication.shared().canOpenURL(url as URL) {
+            UIApplication.shared().openURL(url as URL)
         }
     }
 

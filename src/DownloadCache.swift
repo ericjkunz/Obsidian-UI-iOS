@@ -23,19 +23,19 @@ public protocol Cacheable {
 }
 
 private protocol DummySessionDelegate: class {
-    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL)
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?)
+    func URLSession(session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingToURL location: NSURL)
+    func URLSession(session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?)
 }
 
-private class SessionDelegate: NSObject, NSURLSessionDownloadDelegate {
+private class SessionDelegate: NSObject, URLSessionDownloadDelegate {
 
     private weak var delegate: DummySessionDelegate?
 
-    @objc func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    @objc func URLSession(session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
         delegate?.URLSession(session, task: task, didCompleteWithError: error)
     }
 
-    @objc func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
+    @objc func URLSession(session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
         delegate?.URLSession(session, downloadTask: downloadTask, didFinishDownloadingToURL: location)
     }
 
@@ -81,15 +81,15 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     private var directory: String {
         let dir = NSString(string: NSString(string: Directories.cache).stringByAppendingPathComponent(UIApplication.sharedApplication().bundleIdentifier)).stringByAppendingPathComponent(name)
         do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(dir, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.defaultManager().createDirectoryAtPath(dir, withIntermediateDirectories: true, attributes: nil)
         } catch _ {}
         return dir
     }
 
     private let sessionDelegate: SessionDelegate
-    private let session: NSURLSession
+    private let session: URLSession
     private var queueMutex = MutexPool()
-    private var tasks: [ String : (task: NSURLSessionDownloadTask, item: T) ] = [:]
+    private var tasks: [ String : (task: URLSessionDownloadTask, item: T) ] = [:]
 
     // MARK: Initialization
 
@@ -102,10 +102,10 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     - returns: An initialized DownloadCache object
 
     */
-    public init(name: String, configuration: NSURLSessionConfiguration) {
+    public init(name: String, configuration: URLSessionConfiguration) {
         self.name = name
         sessionDelegate = SessionDelegate()
-        session = NSURLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: NSOperationQueue.mainQueue())
+        session = URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: OperationQueue.mainQueue())
         sessionDelegate.delegate = self
     }
 
@@ -118,7 +118,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
 
     */
     public convenience init(name: String) {
-        self.init(name: name, configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+        self.init(name: name, configuration: URLSessionConfiguration.default)
     }
 
     // MARK: File Management
@@ -133,23 +133,23 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
 
         var filename = NSString(string: item.identifier)
 
-        if let pathExtension = ext, filenameWithExtension = filename.stringByAppendingPathExtension(pathExtension) {
+        if let pathExtension = ext, filenameWithExtension = filename.appendingPathExtension(pathExtension) {
             filename = filenameWithExtension
         }
 
-        if let filenameWithPartExtension = filename.stringByAppendingPathExtension("part") where part {
+        if let filenameWithPartExtension = filename.appendingPathExtension("part") where part {
             filename = filenameWithPartExtension
         }
 
-        return NSString(string: directory).stringByAppendingPathComponent(filename as String)
+        return NSString(string: directory).appendingPathComponent(filename as String)
 
     }
 
     private func exists(path: String) -> Bool {
-        return NSFileManager.defaultManager().fileExistsAtPath(path)
+        return FileManager.default.fileExists(atPath: path)
     }
 
-    private func task(item: Cacheable) -> NSURLSessionDownloadTask? {
+    private func task(item: Cacheable) -> URLSessionDownloadTask? {
 
         let contentPath = path(item)
         let partPath = path(item, part: true)
@@ -159,7 +159,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
         } else if let partData = NSData(contentsOfFile: partPath) where exists(partPath) {
             return session.downloadTaskWithResumeData(partData)
         } else {
-            return session.downloadTaskWithURL(item.url)
+            return session.downloadTask(with: item.url as URL)
         }
 
     }
@@ -170,12 +170,12 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     public func resume() {
         queueMutex.perform {
             let running = self.tasks.filter({ (key, val) -> Bool in
-                let result = val.task.state == .Running
+                let result = val.task.state == .running
                 return result
             })
             if running.isEmpty {
                 let stopped = self.tasks.filter({ (key, val) -> Bool in
-                    let result = val.task.state == .Suspended
+                    let result = val.task.state == .suspended
                     return result
                 })
                 if let first = stopped.keys.first, task = stopped[first]?.task {
@@ -189,7 +189,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     public func pause() {
         queueMutex.perform {
             for (_, v) in self.tasks {
-                if v.task.state == .Running {
+                if v.task.state == .running {
                     v.task.suspend()
                 }
             }
@@ -209,7 +209,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
                     self.tasks[item.identifier] = (task: task, item: item)
                 }
             } else {
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.asynchronously(DispatchQueue.main) {
                     self.handleItemCompletion(item, error: nil)
                 }
             }
@@ -237,14 +237,14 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
         queueMutex.perform {
             if let entry = self.tasks[item.identifier] {
 
-                if entry.task.state == .Running {
+                if entry.task.state == .running {
                     let path = self.path(item, part: true)
                     entry.task.cancelByProducingResumeData { (data) -> Void in
                         data?.writeToFile(path, atomically: true)
                     }
                 }
 
-                self.tasks.removeValueForKey(item.identifier)
+                self.tasks.removeValue(forKey: item.identifier)
             }
         }
     }
@@ -278,7 +278,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
 
     // MARK: DummySessionDelegate
 
-    private func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
+    private func URLSession(session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
 
         queueMutex.perform {
 
@@ -289,7 +289,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
             if let item = matching.values.first?.item, path = location.path {
                 let toPath = self.path(item)
                 do {
-                    try NSFileManager.defaultManager().moveItemAtPath(path, toPath: toPath)
+                    try FileManager.defaultManager().moveItemAtPath(path, toPath: toPath)
                 } catch _ {
                 }
             }
@@ -297,13 +297,13 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
         }
 
         do {
-            try NSFileManager.defaultManager().removeItemAtURL(location)
+            try FileManager.default.removeItem(at: location as URL)
         } catch _ {
         }
 
     }
 
-    private func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    private func URLSession(session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
 
         queueMutex.perform {
             self.tasks = self.tasks.filter({ (key, val) -> Bool in

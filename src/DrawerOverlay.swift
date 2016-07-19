@@ -11,9 +11,9 @@ import UIKit
 
 
 private struct DrawerPresentationControllerConstants {
-    static let AnimationDuration: NSTimeInterval = 0.25
+    static let AnimationDuration: TimeInterval = 0.25
     static let DefaultDrawerWidth: CGFloat = 320.0
-    static let DefaultBackgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.75)
+    static let DefaultBackgroundColor = UIColor.black().withAlphaComponent(0.75)
 }
 
 /// The side on which the drawer should be presented
@@ -37,7 +37,7 @@ private final class DrawerPresentationController: UIPresentationController {
 
     private init(presentedViewController: UIViewController!, presentingViewController: UIViewController!, side: DrawerSide) {
         self.side = side
-        super.init(presentedViewController: presentedViewController, presentingViewController: presentingViewController)
+        super(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
 
     // MARK: Presentation
@@ -58,7 +58,7 @@ private final class DrawerPresentationController: UIPresentationController {
 
         let coordinator = presentingViewController.transitionCoordinator()
 
-        coordinator?.animateAlongsideTransition({ (context) in
+        coordinator?.animate(alongsideTransition: { (context) in
             self.dimmingView.alpha = 1.0
             }, completion: nil)
 
@@ -68,7 +68,7 @@ private final class DrawerPresentationController: UIPresentationController {
 
         let coordinator = presentingViewController.transitionCoordinator()
 
-        coordinator?.animateAlongsideTransition({ (context) in
+        coordinator?.animate(alongsideTransition: { (context) in
             self.dimmingView.alpha = 0.0
             }, completion: nil)
 
@@ -95,7 +95,7 @@ private final class DrawerPresentationController: UIPresentationController {
     // MARK: Actions
 
     private dynamic func dismissController(sender: UITapGestureRecognizer) {
-        presentingViewController.dismissViewControllerAnimated(true, completion: nil)
+        presentingViewController.dismiss(animated: true, completion: nil)
     }
 
 }
@@ -111,18 +111,18 @@ private final class DrawerAnimationController: NSObject, UIViewControllerAnimate
         super.init()
     }
 
-    @objc private func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    @objc private func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return DrawerPresentationControllerConstants.AnimationDuration
     }
 
     @objc private func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
 
-        let fromController = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)
-        let toController = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)
+        let fromController = transitionContext.viewController(forKey: UITransitionContextFromViewControllerKey)
+        let toController = transitionContext.viewController(forKey: UITransitionContextToViewControllerKey)
 
         if let targetController = (presenting ? toController : fromController) {
 
-            let destinationFrame = transitionContext.finalFrameForViewController(targetController)
+            let destinationFrame = transitionContext.finalFrame(for: targetController)
             var originFrame = destinationFrame
 
             var offset: CGFloat!
@@ -137,7 +137,7 @@ private final class DrawerAnimationController: NSObject, UIViewControllerAnimate
             originFrame.offsetInPlace(dx: offset, dy: 0)
 
             targetController.view.frame = presenting ? originFrame : destinationFrame
-            transitionContext.containerView()?.addSubview(targetController.view)
+            transitionContext.containerView().addSubview(targetController.view)
 
             let duration = transitionDuration(transitionContext)
 

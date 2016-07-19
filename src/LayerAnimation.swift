@@ -14,11 +14,11 @@ class LayerAnimation: NSObject {
     var completionClosure: ((finished: Bool)-> ())? = nil
     var layer: CALayer!
 
-    class func animation(layer: CALayer, duration: NSTimeInterval, delay: NSTimeInterval, animations: (() -> ())?, completion: ((finished: Bool)-> ())?) -> LayerAnimation {
+    class func animation(layer: CALayer, duration: TimeInterval, delay: TimeInterval, animations: (() -> ())?, completion: ((finished: Bool)-> ())?) -> LayerAnimation {
 
         let animation = LayerAnimation()
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+        dispatch_time(dispatch_time_t(DISPATCH_TIME_NOW), Int64(delay * Double(NSEC_PER_SEC))).after(DispatchTime.nowwhen: DispatchQueue.main()) {
             var animationGroup: CAAnimationGroup?
             let oldLayer = self.animatableLayerCopy(layer)
             animation.completionClosure = completion
@@ -37,7 +37,7 @@ class LayerAnimation: NSObject {
                 differenceAnimation.duration = duration
                 differenceAnimation.beginTime = CACurrentMediaTime()
                 differenceAnimation.delegate = animation
-                layer.addAnimation(differenceAnimation, forKey: nil)
+                layer.add(differenceAnimation, forKey: nil)
             } else {
                 if let completion = animation.completionClosure {
                     completion(finished: true)
@@ -59,21 +59,21 @@ class LayerAnimation: NSObject {
             animations.append(animation)
         }
 
-        if !CGRectEqualToRect(oldLayer.bounds, newLayer.bounds) {
+        if !oldLayer.bounds.equalTo(newLayer.bounds) {
             let animation = CABasicAnimation(keyPath: "bounds")
             animation.fromValue = NSValue(CGRect: oldLayer.bounds)
             animation.toValue = NSValue(CGRect: newLayer.bounds)
             animations.append(animation)
         }
 
-        if !CGRectEqualToRect(oldLayer.frame, newLayer.frame) {
+        if !oldLayer.frame.equalTo(newLayer.frame) {
             let animation = CABasicAnimation(keyPath: "frame")
             animation.fromValue = NSValue(CGRect: oldLayer.frame)
             animation.toValue = NSValue(CGRect: newLayer.frame)
             animations.append(animation)
         }
 
-        if !CGPointEqualToPoint(oldLayer.position, newLayer.position) {
+        if !oldLayer.position.equalTo(newLayer.position) {
             let animation = CABasicAnimation(keyPath: "position")
             animation.fromValue = NSValue(CGPoint: oldLayer.position)
             animation.toValue = NSValue(CGPoint: newLayer.position)

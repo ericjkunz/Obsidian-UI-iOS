@@ -19,9 +19,9 @@ public extension UICollectionView {
 
     */
     public func registerCellNib(name: String) {
-        let nib = NibCache[name] ?? UINib(nibName: name, bundle: NSBundle.mainBundle())
+        let nib = NibCache[name] ?? UINib(nibName: name, bundle: Bundle.main)
         NibCache[name] = nib
-        registerNib(nib, forCellWithReuseIdentifier: name)
+        register(nib, forCellWithReuseIdentifier: name)
     }
 
     /**
@@ -31,9 +31,9 @@ public extension UICollectionView {
 
     */
     public func registerSectionHeaderNib(name: String) {
-        let nib = NibCache[name] ?? UINib(nibName: name, bundle: NSBundle.mainBundle())
+        let nib = NibCache[name] ?? UINib(nibName: name, bundle: Bundle.main)
         NibCache[name] = nib
-        registerNib(nib, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: name)
+        register(nib, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: name)
     }
 
     /**
@@ -43,9 +43,9 @@ public extension UICollectionView {
 
     */
     public func registerSectionFooterNib(name: String) {
-        let nib = NibCache[name] ?? UINib(nibName: name, bundle: NSBundle.mainBundle())
+        let nib = NibCache[name] ?? UINib(nibName: name, bundle: Bundle.main)
         NibCache[name] = nib
-        registerNib(nib, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: name)
+        register(nib, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: name)
     }
 
 
@@ -63,11 +63,11 @@ public extension UICollectionView {
         let indexSet = NSMutableIndexSet()
 
         for index in sections {
-            indexSet.addIndex(index)
+            indexSet.add(index)
         }
 
         let animations = {
-            self.reloadSections(indexSet)
+            self.reloadSections(indexSet as IndexSet)
         }
 
         if animated {
@@ -84,12 +84,12 @@ public extension UICollectionView {
     var mostVisibleCell: UICollectionViewCell? {
 
         let visibleIndexPaths = self.indexPathsForVisibleItems()
-        let attributes = visibleIndexPaths.map({ self.collectionViewLayout.layoutAttributesForItemAtIndexPath($0) }).filter({ $0 != nil }).map({ $0! })
+        let attributes = visibleIndexPaths.map({ self.collectionViewLayout.layoutAttributesForItem(at: $0) }).filter({ $0 != nil }).map({ $0! })
         let deltas = attributes.map({ $0.frame.origin.distance(fromPoint: self.contentOffset) })
 
         if !visibleIndexPaths.isEmpty {
-            if let i = deltas.indexOf(deltas.minElement()!) {
-                return cellForItemAtIndexPath(visibleIndexPaths[i])
+            if let i = deltas.index(of: deltas.min()!) {
+                return cellForItem(at: visibleIndexPaths[i])
             }
         }
 
@@ -99,7 +99,7 @@ public extension UICollectionView {
     /// The index path of the cell with the greatest visible area
     var mostVisibleIndexPath: NSIndexPath? {
         if let cell = mostVisibleCell {
-            return indexPathForCell(cell)
+            return indexPath(for: cell)
         }
         return nil
     }

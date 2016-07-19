@@ -54,9 +54,9 @@ public class Photos {
     
     private class func createAssetCollection(name: String) -> PHAssetCollection? {
         let fetchOptions = PHFetchOptions()
-        let fetchResult = PHAssetCollection.fetchAssetCollectionsWithType(PHAssetCollectionType.Album, subtype: PHAssetCollectionSubtype.Any, options: fetchOptions)
+        let fetchResult = PHAssetCollection.fetchAssetCollections(with: PHAssetCollectionType.album, subtype: PHAssetCollectionSubtype.any, options: fetchOptions)
         var alreadyExists = false
-        for var i = 0; i < fetchResult.count; ++i {
+        for i in 0 ..< fetchResult.count += 1 {
             if let collection = fetchResult[i] as? PHAssetCollection {
                 if collection.localizedTitle == name {
                     alreadyExists = true
@@ -141,8 +141,8 @@ public class Photos {
      */
     public class func latestAsset(size: CGSize, contentMode: PHImageContentMode, completion: ImageCompletion) {
         let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
-        let fetchResult = PHAsset.fetchAssetsWithMediaType(PHAssetMediaType.Image, options: fetchOptions)
+        fetchOptions.sortDescriptors = [SortDescriptor(key: "creationDate", ascending: true)]
+        let fetchResult = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: fetchOptions)
         
         guard let lastAsset = fetchResult.lastObject as? PHAsset else {
             completion?(nil)

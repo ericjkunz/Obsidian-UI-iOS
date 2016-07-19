@@ -107,7 +107,7 @@ public class TabBarController: UIViewController, TabBarDelegate {
         tabBar.selectTab(tab)
 
         if let c = contentViewController {
-            c.willMoveToParentViewController(nil)
+            c.willMove(toParentViewController: nil)
             c.view.removeFromSuperview()
             c.removeFromParentViewController()
         }
@@ -116,7 +116,7 @@ public class TabBarController: UIViewController, TabBarDelegate {
         self.addChildViewController(new)
         new.view.frame = controllerContainer.bounds
         controllerContainer.addSubview(new.view)
-        new.didMoveToParentViewController(self)
+        new.didMove(toParentViewController: self)
 
         contentViewController = new
 

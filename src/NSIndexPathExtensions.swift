@@ -18,7 +18,7 @@ Returns an array of NSIndexPaths with their indexes pre-populated from the passe
 - returns: An array of NSIndexPaths generated
 
 */
-public func indexPaths<T: CollectionType>(collection: T, _ startIndex: Int = 0, _ section: Int = 0) -> [NSIndexPath] {
+public func indexPaths<T: Collection>(collection: T, _ startIndex: Int = 0, _ section: Int = 0) -> [NSIndexPath] {
     if let num = collection.count as? Int {
         let range = 0..<num
         let paths = range.map { NSIndexPath(forItem: startIndex + $0, inSection: section) }

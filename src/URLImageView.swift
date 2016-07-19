@@ -9,7 +9,7 @@
 import Foundation
 
 protocol URLImageViewDelegate {
-    func loadedImage(image image: UIImage?, error: NSError?)
+    func loadedImage(image: UIImage?, error: NSError?)
 }
 
 public final class URLImageView: UIImageView {

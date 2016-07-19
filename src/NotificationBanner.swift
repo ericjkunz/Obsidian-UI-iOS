@@ -93,7 +93,7 @@ public class NotificationBanner: FloatingView {
     }
 
     /// :nodoc:
-    convenience public init() {
+    convenience public override init() {
         self.init(frame: CGRect.zero)
         commonInit()
     }
@@ -163,7 +163,7 @@ public class NotificationBanner: FloatingView {
         show(topOfView: 0, width: view.width, height: height)
     }
 
-    private func configureBanner(color color: UIColor = UIColor.darkGrayColor(), textColor: UIColor = UIColor.whiteColor(), message: String, duration: Double = 3.0, height: CGFloat = 35) {
+    private func configureBanner(color: UIColor = UIColor.darkGrayColor(), textColor: UIColor = UIColor.whiteColor(), message: String, duration: Double = 3.0, height: CGFloat = 35) {
         text = message
         backgroundColor = color
         self.textColor = textColor

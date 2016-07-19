@@ -50,6 +50,6 @@ public func addHandler<T: UIControl, U: AnyObject>(control: T, events: UIControl
 
     objc_setAssociatedObject(object, fakePointer, controlHandler, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
-    control.addTarget(controlHandler, action: "call:", forControlEvents: events)
+    control.addTarget(controlHandler, action: "call:", for: events)
 
 }

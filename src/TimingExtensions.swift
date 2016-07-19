@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension NSTimeInterval {
+public extension TimeInterval {
 
     // MARK: Timing
 
@@ -19,8 +19,8 @@ public extension NSTimeInterval {
 
     */
     public func delay(closure: () -> ()) {
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(self * Double(NSEC_PER_SEC)))
-        dispatch_after(delayTime, dispatch_get_main_queue(), closure)
+        let delayTime = DispatchTime.now(dispatch_time_t(DispatchTime.now), Int64(self * Double(NSEC_PER_SEC)))
+        delayTime.after(when: DispatchQueue.main(), execute: closure)
     }
 
 }
@@ -30,22 +30,22 @@ public extension NSNumber {
     // MARK: Timing
 
     /// Returns the receiver represented as an NSTimeInterval
-    public var seconds: NSTimeInterval {
-        return NSTimeInterval(self)
+    public var seconds: TimeInterval {
+        return TimeInterval(self)
     }
 
     /// Returns the receiver (in minutes) represented as an NSTimeInterval
-    public var minutes: NSTimeInterval {
+    public var minutes: TimeInterval {
         return seconds * 60.0
     }
 
     /// Returns the receiver (in hours) represented as an NSTimeInterval
-    public var hours: NSTimeInterval {
+    public var hours: TimeInterval {
         return minutes * 60.0
     }
 
     /// Returns the receiver (in days) represented as an NSTimeInterval
-    public var days: NSTimeInterval {
+    public var days: TimeInterval {
         return hours * 24.0
     }
 

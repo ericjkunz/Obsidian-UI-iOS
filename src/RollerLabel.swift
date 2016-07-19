@@ -32,7 +32,7 @@ public class RollerLabel: CharacterLabel {
         self.text = text
     }
     
-    override public var attributedText: NSAttributedString? {
+    override public var attributedText: AttributedString? {
         get {
             return super.attributedText
         }
@@ -73,13 +73,13 @@ public class RollerLabel: CharacterLabel {
                 return
             }
             
-            for index in (lowestIndex...characterTextLayers.count - 1).reverse() {
+            for index in (lowestIndex...characterTextLayers.count - 1).reversed() {
                 let textLayer = characterTextLayers[index]
                 textLayer.opacity = 0
                 let translation = CATransform3DMakeTranslation(0, textLayer.bounds.height, 0)
                 textLayer.transform = translation
                 
-                LayerAnimation.animation(textLayer, duration:self.animationDuration, delay:NSTimeInterval(count += 1) * self.characterAnimationDelay, animations: {
+                LayerAnimation.animation(textLayer, duration:self.animationDuration, delay:TimeInterval(count += 1) * self.characterAnimationDelay, animations: {
                     textLayer.transform = CATransform3DIdentity
                     textLayer.opacity = 1
                     }, completion: { finished in
@@ -94,12 +94,12 @@ public class RollerLabel: CharacterLabel {
     private func animateOut(completion: ((finished: Bool) -> Void)? = nil) {
         var count = 1
         
-        for var index = oldCharacterTextLayers.count - 1; index >= lowestNotMatchingIndex!; index-- {
+        for var index = oldCharacterTextLayers.count - 1; index >= lowestNotMatchingIndex!; index -= 1 {
             let textLayer = oldCharacterTextLayers[index]
             textLayer.transform = CATransform3DIdentity
             let translation = CATransform3DMakeTranslation(0, -textLayer.bounds.height, 0)
             
-            LayerAnimation.animation(textLayer, duration:self.animationDuration, delay:NSTimeInterval(count++) * self.characterAnimationDelay, animations: {
+            LayerAnimation.animation(textLayer, duration:self.animationDuration, delay:TimeInterval(count++) * self.characterAnimationDelay, animations: {
                 textLayer.transform = translation
                 textLayer.opacity = 0
                 }, completion: { finished in
@@ -121,7 +121,7 @@ public class RollerLabel: CharacterLabel {
             })
         }
         
-        for var index = 0; index < lowestNotMatchingIndex!; index++ {
+        for index in 0 ..< lowestNotMatchingIndex! {
             oldCharacterTextLayers[index].removeFromSuperlayer()
         }
     }
@@ -146,13 +146,13 @@ public class RollerLabel: CharacterLabel {
             return 0
         }
         
-        for var index = characterTextLayers.count - 1; index >= 0; index-- {
+        for var index = characterTextLayers.count - 1; index >= 0; index -= 1 {
             
-            guard let oldCharacter = oldCharacterTextLayers[index].string as? NSAttributedString, newCharacter = characterTextLayers[index].string as? NSAttributedString else {
+            guard let oldCharacter = oldCharacterTextLayers[index].string as? AttributedString, newCharacter = characterTextLayers[index].string as? AttributedString else {
                 return nil
             }
             
-            if !newCharacter.isEqualToAttributedString(oldCharacter) {
+            if !newCharacter.isEqual(to: oldCharacter) {
                 if index < lowestIndex { lowestIndex = index }
             }
             

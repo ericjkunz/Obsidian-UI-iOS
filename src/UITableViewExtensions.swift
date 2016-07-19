@@ -45,7 +45,7 @@ extension UITableView {
         let indexSet = NSMutableIndexSet()
 
         for index in sections {
-            indexSet.addIndex(index)
+            indexSet.add(index)
         }
 
         let animations = { () -> () in

@@ -84,7 +84,7 @@ public class ScrollLoader {
         if success && previousCount == delegate.count(self) {
             ended = true
         } else if success {
-            page++
+            page += 1
         }
 
     }

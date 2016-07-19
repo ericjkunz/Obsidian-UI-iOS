@@ -11,9 +11,9 @@ import QuartzCore
 import UIKit
 
 extension CATextLayer {
-    convenience init(frame: CGRect, string: NSAttributedString) {
+    convenience init(frame: CGRect, string: AttributedString) {
         self.init()
-        self.contentsScale = UIScreen.mainScreen().scale
+        self.contentsScale = UIScreen.main().scale
         self.frame = frame
         self.string = string
     }

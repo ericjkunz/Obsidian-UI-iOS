@@ -21,9 +21,9 @@ public final class ImageDownloader {
 
     // MARK: Private Properties
 
-    private let session: NSURLSession = {
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        let session = NSURLSession(configuration: config)
+    private let session: URLSession = {
+        let config = URLSessionConfiguration.default
+        let session = URLSession(configuration: config)
         return session
         }()
 
@@ -56,9 +56,9 @@ public final class ImageDownloader {
             return nil
         }
 
-        let request = NSURLRequest(URL: url)
+        let request = NSURLRequest(URL: url as URL)
 
-        let task = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
             if let e = error {
                 MainQueue.async {
                     completion?(image: nil, error: e)
@@ -83,7 +83,7 @@ public final class ImageDownloader {
 
 public struct ImageDownloadTask {
 
-    private let task: NSURLSessionDataTask
+    private let task: URLSessionDataTask
 
     /// Cancels the task
     public func cancel() {

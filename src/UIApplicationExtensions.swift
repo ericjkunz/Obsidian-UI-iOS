@@ -12,7 +12,7 @@ extension UIApplication {
 
     /// The application's bundle ID
     var bundleIdentifier: String! {
-        return NSBundle.mainBundle().bundleIdentifier!
+        return Bundle.main.bundleIdentifier!
     }
 
 }
