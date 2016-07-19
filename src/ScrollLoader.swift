@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import CoreGraphics
+import UIKit
 
 public protocol ScrollLoaderDelegate: class {
 
@@ -67,8 +69,8 @@ public class ScrollLoader {
 
     private func startLoading() {
         loading = true
-        previousCount = delegate.count(self)
-        delegate?.load(self, page: page)
+        previousCount = delegate.count(loader: self)
+        delegate?.load(loader: self, page: page)
     }
 
     /**
@@ -81,7 +83,7 @@ public class ScrollLoader {
 
         loading = false
 
-        if success && previousCount == delegate.count(self) {
+        if success && previousCount == delegate.count(loader: self) {
             ended = true
         } else if success {
             page += 1
@@ -106,8 +108,8 @@ public class ScrollLoader {
     */
     public func trackScroll(scrollView: UIScrollView) {
 
-        var distance = CGFloat.max
-        var dimension = CGFloat.max
+        var distance = CGFloat.greatestFiniteMagnitude
+        var dimension = CGFloat.greatestFiniteMagnitude
 
         switch direction {
         case .Vertical:
@@ -120,7 +122,7 @@ public class ScrollLoader {
 
         let threshold = dimension / 2
 
-        if !loading && !ended && distance.floatingPointClass == .PositiveNormal && distance < threshold {
+        if !loading && !ended && distance.floatingPointClass == .positiveNormal && distance < threshold {
             startLoading()
         }
 

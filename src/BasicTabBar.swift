@@ -11,23 +11,23 @@
 import UIKit
 
 public final class BasicTabBar: BaseTabBar {
-
+    
     // MARK: Initialization
-
+    
     public override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
     }
-
+    
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()
     }
-
+    
     private func commonInit() {
         backgroundColor = backgroundColor ?? UIColor.white()
     }
-
+    
     /// The accent color, used for the selected tab text and indicator
     public override var tintColor: UIColor! {
         didSet {
@@ -35,7 +35,7 @@ public final class BasicTabBar: BaseTabBar {
             setNeedsDisplay()
         }
     }
-
+    
     /// The text color used for non-selected tabs
     public var textColor: UIColor = UIColor(red:0.14, green:0.14, blue:0.15, alpha:1) {
         didSet {
@@ -43,33 +43,33 @@ public final class BasicTabBar: BaseTabBar {
             setNeedsDisplay()
         }
     }
-
+    
     /// The height of the selected tab indicator
     public var indicatorHeight: CGFloat = 3 {
         didSet {
             setNeedsDisplay()
         }
     }
-
+    
     /// The font used for the tab text
     public var tabFont = UIFont.systemFont(ofSize: UIFont.systemFontSize()) {
         didSet {
             layoutButtons()
         }
     }
-
+    
     // MARK: Layout
-
+    
     private func layoutButtons() {
-
+        
         guard delegate != nil else {
             return
         }
-
+        
         subviews.forEach { $0.removeFromSuperview() }
-
+        
         let tabNames = delegate.tabNames
-
+        
         let buttons = tabNames.map { (title) -> UIButton in
             let b = UIButton(type: .custom)
             b.setTitle(title, for: .normal)
@@ -80,11 +80,11 @@ public final class BasicTabBar: BaseTabBar {
             b.setTitleColor(self.tintColor, for: .highlighted)
             return b
         }
-
+        
         let buttonSize = ceil(width / CGFloat(tabNames.count))
-
+        
         var x: CGFloat = 0
-
+        
         for (i, b) in buttons.enumerated() {
             b.x = x
             b.y = 0
@@ -93,35 +93,37 @@ public final class BasicTabBar: BaseTabBar {
             b.tag = i
             x += buttonSize
         }
-
+        
         buttons.forEach { self.addSubview($0) }
-
+        
         selectTab(index: delegate.selectedTabIndex)
-
+        
     }
-
+    
     // MARK: BaseTabBar overrides
-
+    
     /// :nodoc:
     public override func layout() {
         super.layout()
         layoutButtons()
     }
-
+    
     /// :nodoc:
     public override func selectTab(index: Int) {
-
-        if var buttons = (subviews as? [UIButton]).sort({ $0.x < $1.x }) {
-            for (i, b) in buttons.enumerate() {
-                b.selected = (i == index)
+        
+        if var buttons = subviews as? [UIButton] {
+            buttons.sort(isOrderedBefore: { $0.x < $1.x })
+            for (i, b) in buttons.enumerated() {
+                b.isSelected = (i == index)
             }
         }
         setNeedsDisplay()
     }
-
+    
     public override func frameForTab(index: Int) -> CGRect {
-        if var buttons = (subviews as? [UIButton]).sort({ $0.x < $1.x }) {
-            for (i, b) in buttons.enumerate() {
+        if var buttons = subviews as? [UIButton] {
+            buttons.sort(isOrderedBefore: { $0.x < $1.x })
+            for (i, b) in buttons.enumerated() {
                 if i == index {
                     return b.frame
                 }
@@ -129,14 +131,14 @@ public final class BasicTabBar: BaseTabBar {
         }
         return super.frameForTab(index: index)
     }
-
+    
     // MARK: Actions
     private dynamic func selectTabButton(button: UIButton) {
         delegate.selectTab(index: button.tag)
     }
-
+    
     // MARK: UIView Overrides
-
+    
     /// :nodoc:
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
@@ -145,11 +147,11 @@ public final class BasicTabBar: BaseTabBar {
         let fillRect = CGRect(x: buttonWidth * CGFloat(delegate.selectedTabIndex), y: rect.height - indicatorHeight, width: buttonWidth, height: indicatorHeight)
         UIRectFill(fillRect)
     }
-
+    
     /// :nodoc:
     public override func layoutSubviews() {
         super.layoutSubviews()
         layoutButtons()
     }
-
+    
 }

@@ -6,7 +6,7 @@
 //  Copyright © 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 /**
 A placeholder image view object will attempt to load an image from
@@ -53,7 +53,7 @@ public class PlaceholderImageView: UIView, URLImageViewDelegate {
         }
         didSet {
             if let v = placeholderView {
-                placeholderView?.hidden = imageView.image != nil
+                placeholderView?.isHidden = imageView.image != nil
                 addSubview(v)
             }
         }
@@ -68,9 +68,9 @@ public class PlaceholderImageView: UIView, URLImageViewDelegate {
             imageView.image = newValue
 
             if image != nil {
-                placeholderView?.hidden = true
+                placeholderView?.isHidden = true
             } else {
-                placeholderView?.hidden = false
+                placeholderView?.isHidden = false
             }
         }
     }
@@ -82,7 +82,7 @@ public class PlaceholderImageView: UIView, URLImageViewDelegate {
         }
         set {
             if newValue == nil {
-                placeholderView?.hidden = false
+                placeholderView?.isHidden = false
             }
 
             imageView.imageURL = newValue
@@ -169,9 +169,9 @@ public class PlaceholderImageView: UIView, URLImageViewDelegate {
     func loadedImage(image: UIImage?, error: NSError?) {
         if let loadedImage = image {
             self.image = loadedImage
-            placeholderView?.hidden = true
+            placeholderView?.isHidden = true
         } else {
-            placeholderView?.hidden = false
+            placeholderView?.isHidden = false
         }
     }
 }

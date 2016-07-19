@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public extension UIResponder {
 
@@ -14,7 +14,7 @@ public extension UIResponder {
     public var parentViewController: UIViewController? {
         var parentResponder: UIResponder? = self
         while parentResponder != nil {
-            parentResponder = parentResponder!.nextResponder()
+            parentResponder = parentResponder!.next()
             if let viewController = parentResponder as? UIViewController {
                 return viewController
             }

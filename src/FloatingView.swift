@@ -6,7 +6,7 @@
 //  Copyright © 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 /**
 A view that positions itself based on the scrolling of its superview.

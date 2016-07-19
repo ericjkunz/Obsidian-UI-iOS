@@ -11,7 +11,7 @@ import Foundation
 postfix operator ¡ { }
 
 /// :nodoc:
-public postfix func ¡ (flag: inout Bool) -> Bool {
+public postfix func ¡ ( flag: inout Bool) -> Bool {
     flag = !flag
     return !flag
 }
@@ -36,3 +36,13 @@ public protocol Invertable {
 }
 
 extension Bool : Invertable { }
+
+
+
+// Also kinda silly
+
+infix operator >< { associativity none precedence 135 }
+
+func ><(lhs: Int, rhs: Int) -> CountableRange<Int> {
+    return (lhs + 1)..<rhs
+}

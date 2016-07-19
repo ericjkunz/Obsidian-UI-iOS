@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 private class PopoverMenuTableViewController: UITableViewController {
 
@@ -24,21 +24,21 @@ private class PopoverMenuTableViewController: UITableViewController {
         super.viewDidLoad()
         tableView.separatorInset = UIEdgeInsetsZero
         tableView.layoutMargins = UIEdgeInsetsZero
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: PopoverMenuTableViewController.ReuseIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: PopoverMenuTableViewController.ReuseIdentifier)
     }
 
     // MARK: UITableViewDataSource
 
-    private override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    private override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    private override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    private override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
 
-    private override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(PopoverMenuTableViewController.ReuseIdentifier, forIndexPath: indexPath)
+    private override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: PopoverMenuTableViewController.ReuseIdentifier, for: indexPath as IndexPath)
 
         let item = items[indexPath.row]
 
@@ -47,7 +47,7 @@ private class PopoverMenuTableViewController: UITableViewController {
         cell.textLabel?.textColor = item.textColor
         cell.textLabel?.textAlignment = item.textAlignment
 
-        cell.selectionStyle = .None
+        cell.selectionStyle = .none
         cell.layoutMargins = UIEdgeInsetsZero
 
         return cell
@@ -55,17 +55,17 @@ private class PopoverMenuTableViewController: UITableViewController {
 
     // MARK: UITableViewDelegate
 
-    private override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    private override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return items[indexPath.row].height
     }
 
-    private override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    private override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let item = items[indexPath.row]
 
         // Always a solid fix :)
         (0.1).seconds.delay {
-            self.presentingViewController?.dismissViewControllerAnimated(true, completion: item.selection)
+            self.presentingViewController?.dismiss(animated: true, completion: item.selection)
         }
 
     }
@@ -87,10 +87,10 @@ public struct PopoverItem {
     public var textColor = UIColor(red:0, green:0.58, blue:1, alpha:1)
 
     /// The font that will be used for the item's label
-    public var textFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
+    public var textFont = UIFont.systemFont(ofSize: UIFont.systemFontSize())
 
     /// The text alignment that will be used for the item's label
-    public var textAlignment: NSTextAlignment = .Center
+    public var textAlignment: NSTextAlignment = .center
 
     /// The closure that will be executed upon selection of the item
     public var selection: Selection?
@@ -134,8 +134,8 @@ public final class PopoverMenu {
     */
     public init(items: [PopoverItem]) {
         controller.items = items
-        controller.modalPresentationStyle = .Popover
-        controller.popoverPresentationController?.backgroundColor = UIColor.whiteColor()
+        controller.modalPresentationStyle = .popover
+        controller.popoverPresentationController?.backgroundColor = UIColor.white()
     }
 
     /**
@@ -167,14 +167,14 @@ public final class PopoverMenu {
     }
 
     private func configurePopover() {
-        let screenHeight = UIScreen.mainScreen().bounds.height
+        let screenHeight = UIScreen.main().bounds.height
         let height = controller.items.reduce(CGFloat(0)) { return $0 + $1.height }
         let constrainedHeight = min(height, floor(screenHeight / 2.0))
-        controller.tableView.scrollEnabled = height != constrainedHeight
+        controller.tableView.isScrollEnabled = height != constrainedHeight
         controller.preferredContentSize = CGSize(width: width, height: constrainedHeight)
     }
 
-    private func presentPopover(c: UIViewController) {
+    private func presentPopover(_ c: UIViewController) {
         controller.present(c)
     }
 

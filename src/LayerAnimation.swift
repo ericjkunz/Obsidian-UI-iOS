@@ -1,6 +1,6 @@
 //
 //  LayerAnimation.swift
-//  Alfredo
+//  Obsidian UI
 //
 //  Created by Eric Kunz on 10/26/15.
 //  Copyright © 2015 TENDIGI, LLC. All rights reserved.
@@ -9,18 +9,18 @@
 import Foundation
 import QuartzCore
 
-class LayerAnimation: NSObject {
+class LayerAnimation: NSObject, CAAnimationDelegate {
 
     var completionClosure: ((finished: Bool)-> ())? = nil
     var layer: CALayer!
 
-    class func animation(layer: CALayer, duration: TimeInterval, delay: TimeInterval, animations: (() -> ())?, completion: ((finished: Bool)-> ())?) -> LayerAnimation {
+    class func animation(layer: CALayer, duration: TimeInterval, delay: DispatchWallTime, animations: (() -> ())?, completion: ((finished: Bool)-> ())?) -> LayerAnimation {
 
         let animation = LayerAnimation()
 
-        dispatch_time(dispatch_time_t(DISPATCH_TIME_NOW), Int64(delay * Double(NSEC_PER_SEC))).after(DispatchTime.nowwhen: DispatchQueue.main()) {
+        DispatchQueue.main.after(walltime: delay) {
             var animationGroup: CAAnimationGroup?
-            let oldLayer = self.animatableLayerCopy(layer)
+            let oldLayer = self.animatableLayerCopy(layer: layer)
             animation.completionClosure = completion
 
             if let layerAnimations = animations {
@@ -30,7 +30,7 @@ class LayerAnimation: NSObject {
                 CATransaction.commit()
             }
 
-            animationGroup = self.groupAnimationsForDifferences(oldLayer, newLayer: layer)
+            animationGroup = self.groupAnimationsForDifferences(old: oldLayer, new: layer)
 
             if let differenceAnimation = animationGroup {
                 differenceAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -48,42 +48,42 @@ class LayerAnimation: NSObject {
         return animation
     }
 
-    class func groupAnimationsForDifferences(oldLayer: CALayer, newLayer: CALayer) -> CAAnimationGroup? {
+    class func groupAnimationsForDifferences(old: CALayer, new: CALayer) -> CAAnimationGroup? {
         var animationGroup: CAAnimationGroup?
         var animations = Array<CABasicAnimation>()
 
-        if !CATransform3DEqualToTransform(oldLayer.transform, newLayer.transform) {
+        if !CATransform3DEqualToTransform(old.transform, new.transform) {
             let animation = CABasicAnimation(keyPath: "transform")
-            animation.fromValue = NSValue(CATransform3D: oldLayer.transform)
-            animation.toValue = NSValue(CATransform3D: newLayer.transform)
+            animation.fromValue = NSValue(caTransform3D: old.transform)
+            animation.toValue = NSValue(caTransform3D: new.transform)
             animations.append(animation)
         }
 
-        if !oldLayer.bounds.equalTo(newLayer.bounds) {
+        if !old.bounds.equalTo(new.bounds) {
             let animation = CABasicAnimation(keyPath: "bounds")
-            animation.fromValue = NSValue(CGRect: oldLayer.bounds)
-            animation.toValue = NSValue(CGRect: newLayer.bounds)
+            animation.fromValue = NSValue(cgRect: old.bounds)
+            animation.toValue = NSValue(cgRect: new.bounds)
             animations.append(animation)
         }
 
-        if !oldLayer.frame.equalTo(newLayer.frame) {
+        if !old.frame.equalTo(new.frame) {
             let animation = CABasicAnimation(keyPath: "frame")
-            animation.fromValue = NSValue(CGRect: oldLayer.frame)
-            animation.toValue = NSValue(CGRect: newLayer.frame)
+            animation.fromValue = NSValue(cgRect: old.frame)
+            animation.toValue = NSValue(cgRect: new.frame)
             animations.append(animation)
         }
 
-        if !oldLayer.position.equalTo(newLayer.position) {
+        if !old.position.equalTo(new.position) {
             let animation = CABasicAnimation(keyPath: "position")
-            animation.fromValue = NSValue(CGPoint: oldLayer.position)
-            animation.toValue = NSValue(CGPoint: newLayer.position)
+            animation.fromValue = NSValue(cgPoint: old.position)
+            animation.toValue = NSValue(cgPoint: new.position)
             animations.append(animation)
         }
 
-        if oldLayer.opacity != newLayer.opacity {
+        if old.opacity != new.opacity {
             let animation = CABasicAnimation(keyPath: "opacity")
-            animation.fromValue = oldLayer.opacity
-            animation.toValue = newLayer.opacity
+            animation.fromValue = old.opacity
+            animation.toValue = new.opacity
             animations.append(animation)
         }
 
@@ -107,7 +107,7 @@ class LayerAnimation: NSObject {
         return layerCopy
     }
 
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if let completion = completionClosure {
             completion(finished: true)
         }

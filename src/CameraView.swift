@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 @IBDesignable class CameraView: UIView {
 
@@ -31,7 +31,7 @@ import Foundation
 
         // Use constraints to have buttons between bottom of frame and camera preview but no less than maybe 10 from the bottom
 
-        backgroundColor = UIColor.blackColor()
+        backgroundColor = UIColor.black()
         let rect = frame
         let topBar = UIView(frame: CGRect(x: 0, y: 0, width: Int(rect.width), height: Int(topBarHeight)))
         closeButton = CloseCross(frame: CGRect(x: 5, y: 5, width: topBarHeight - 5, height: topBarHeight - 5))
@@ -42,7 +42,7 @@ import Foundation
         addSubview(topBar)
 
         cameraPreview = UIView(frame: rect)
-        cameraPreview.backgroundColor = UIColor.darkGrayColor()
+        cameraPreview.backgroundColor = UIColor.darkGray()
         addSubview(cameraPreview)
 
         let bottomSpace = CGFloat(10)
@@ -57,7 +57,7 @@ import Foundation
         addSubview(libraryButton)
 
         imageReview = UIImageView(frame: cameraPreview.frame)
-        imageReview.hidden = true
+        imageReview.isHidden = true
         addSubview(imageReview)
 
         reviewContainerView = UIView(frame: CGRect(x: 0, y: topBarHeight + rect.width, width: rect.width, height: rect.height - topBarHeight + rect.width))
@@ -70,31 +70,31 @@ import Foundation
 }
 
 class CloseCross: UIButton {
-    @IBInspectable var color = UIColor.whiteColor()
+    @IBInspectable var color = UIColor.white()
     @IBInspectable var lineWidth = 5
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let pathOne = UIBezierPath()
-        pathOne.moveToPoint(CGPoint(x: 0, y: 0))
-        pathOne.addLineToPoint(CGPoint(x: rect.width, y: rect.height))
-        pathOne.moveToPoint(CGPoint(x: rect.width, y: 0))
-        pathOne.addLineToPoint(CGPoint(x: 0, y: rect.height))
+        pathOne.move(to: CGPoint(x: 0, y: 0))
+        pathOne.addLine(to: CGPoint(x: rect.width, y: rect.height))
+        pathOne.move(to: CGPoint(x: rect.width, y: 0))
+        pathOne.addLine(to: CGPoint(x: 0, y: rect.height))
 
         let shapeLayer = CAShapeLayer()
-        shapeLayer.path = pathOne.CGPath
+        shapeLayer.path = pathOne.cgPath
         shapeLayer.lineWidth = CGFloat(lineWidth)
-        shapeLayer.fillColor = color.CGColor
+        shapeLayer.fillColor = color.cgColor
     }
 }
 
 @IBDesignable class CaptureButton: UIButton {
-    @IBInspectable var color = UIColor.clearColor()
-    @IBInspectable var borderColor = UIColor.whiteColor()
+    @IBInspectable var color = UIColor.clear()
+    @IBInspectable var borderColor = UIColor.white()
     @IBInspectable var borderWidth = CGFloat(2)
 
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         var buttonRect: CGRect
 
-        if selected {
+        if isSelected {
             buttonRect = CGRect(x: 0, y: 0, width: rect.size.width * 0.9, height: rect.size.height * 0.9)
         } else {
             buttonRect = CGRect(x: 0, y: 0, width: rect.size.width, height: rect.size.height)

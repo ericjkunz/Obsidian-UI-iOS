@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 protocol URLImageViewDelegate {
     func loadedImage(image: UIImage?, error: NSError?)
@@ -61,9 +61,9 @@ public final class URLImageView: UIImageView {
         cancelled = false
 
         if let url = imageURL {
-            task = ImageDownloader.sharedInstance.download(url, completion: { [weak self] (image, error) -> () in
+            task = ImageDownloader.sharedInstance.download(url: url, completion: { [weak self] (image, error) -> () in
 
-                if let cancelled = self?.cancelled where !cancelled {
+                if let cancelled = self?.cancelled, !cancelled {
                     self?.image = image
                     self?.delegate?.loadedImage(image: image, error: error)
                 }

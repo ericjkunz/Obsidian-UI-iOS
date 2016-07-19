@@ -12,51 +12,51 @@ import UIKit
 // MARK: Localization
 
 /**
-Returns a localized string from the main bundle's default localized strings table
-
-- parameter key: The key to look up
-
-- returns: The localized string if it exists, otherwise returns the key passed in.
-
-*/
-public func L(key: String) -> String {
+ Returns a localized string from the main bundle's default localized strings table
+ 
+ - parameter key: The key to look up
+ 
+ - returns: The localized string if it exists, otherwise returns the key passed in.
+ 
+ */
+public func L(_ key: String) -> String {
     return NSLocalizedString(key, tableName: nil, bundle: Bundle.main, comment: "")
 }
 
 /// Returns a random UIColor
 public func randomColor() -> UIColor {
-
+    
     var 💩: CGFloat {
         let divisor: UInt32 = 50
         let dividend = CGFloat(arc4random_uniform(divisor))
         return dividend / CGFloat(divisor)
     }
-
+    
     return UIColor(red: 💩, green: 💩, blue: 💩, alpha: 1.0)
-
+    
 }
 
 /// The main queue (equivalent to calling `dispatch_get_main_queue()`)
-public let MainQueue: dispatch_queue_t = {
-    return dispatch_get_main_queue()
-    }()
+public let MainQueue: DispatchQueue = {
+    return DispatchQueue.main
+}()
 
 
 /// The background queue (equivalent to calling `dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)`)
-public let BackgroundQueue: dispatch_queue_t = {
+public let BackgroundQueue: DispatchQueue = {
     return GlobalQueue()
-    }()
+}()
 
 /**
-Returns the global queue with the passed identifier
-
-- parameter identifier: The quality of service you want to give to tasks executed using this queue. You may also specify one of the dispatch queue priority values.
-
-- returns: The requested global concurrent queue.
-
-*/
-public func GlobalQueue(identifier: Int = DISPATCH_QUEUE_PRIORITY_BACKGROUND) -> dispatch_queue_t {
-    return dispatch_get_global_queue(identifier, 0)
+ Returns the global queue with the passed identifier
+ 
+ - parameter identifier: The quality of service you want to give to tasks executed using this queue. You may also specify one of the dispatch queue priority values.
+ 
+ - returns: The requested global concurrent queue.
+ 
+ */
+public func GlobalQueue(identifier: DispatchQueue.GlobalAttributes = DispatchQueue.GlobalAttributes.qosDefault) -> DispatchQueue {
+    return DispatchQueue.global(attributes: identifier)
 }
 
 internal struct Constants {
@@ -69,11 +69,16 @@ internal let NibCache = MemoryCache<NSString, UINib>(identifier: Constants.NibCa
 
 /// Return the index of an element matching the passed predicate in the given sequence, or nil if the element is not found in the sequence.
 public func search<C: Collection>(source: C, predicate: (C.Iterator.Element) -> Bool) -> C.Index? {
-    for i in source.indices {
+    
+    var i = source.startIndex
+    
+    while i != source.endIndex {
         if predicate(source[i]) {
             return i
         }
+        i = source.index(after: i)
     }
+    
     return nil
 }
 
@@ -102,36 +107,33 @@ public func rand(min: Double, max: Double) -> Double {
 
 /// Returns a random Float between min and max
 public func rand(min: Float, max: Float) -> Float {
-    return Float(rand(Double(min), max: Double(max)))
+    return Float(rand(min: min, max: max))
 }
 
 /// Returns a random CGFloat between min and max
 public func rand(min: CGFloat, max: CGFloat) -> CGFloat {
-    return CGFloat(rand(Double(min), max: Double(max)))
+    return CGFloat(rand(min:min, max: max))
+}
+
+/// Returns a closure that calls the passed function once it has been left alone for the passed delay (seconds)
+func debounce( delay: Double, queue: DispatchQueue = .main, action: VoidFunction ) -> VoidFunction {
+    let delayInMilliseconds = DispatchTimeInterval.milliseconds(Int(delay * 1000.0))
+    return debounce(delay: delayInMilliseconds, queue: queue, action: action)
 }
 
 /// Returns a closure that calls the passed function once it has been left alone for the passed delay
-public func debounce(delay: TimeInterval, function: VoidFunction) -> VoidFunction {
-    let queue = DispatchQueue.main
-    var lastFireTime: dispatch_time_t = 0
-    let dispatchDelay = Int64(delay * Double(NSEC_PER_SEC))
+func debounce( delay: DispatchTimeInterval, queue: DispatchQueue = .main, action: VoidFunction ) -> VoidFunction {
+    
+    var lastFireTime = DispatchTime.now()
+    
     return {
-        lastFireTime = DispatchTime.now(dispatch_time_t(DispatchTime.now), 0)
-        let fireTime = DispatchTime.now(dispatch_time_t(DispatchTime.now), dispatchDelay)
-        fireTime.after(when: queue) {
-            let now = dispatch_time(DISPATCH_TIME_NOW, 0)
-            let when = dispatch_time(lastFireTime, dispatchDelay)
-            if now >= when {
-                function()
+        lastFireTime = .now()
+        queue.after(when: .now() + delay) {
+            let now = DispatchTime.now()
+            let when = lastFireTime + delay
+            if now.rawValue >= when.rawValue {
+                action()
             }
         }
     }
-}
-
-/// Calls a closure after a time delay
-public func delay(delay: Double, closure:()->()) {
-    dispatch_time(
-            dispatch_time_t(DISPATCH_TIME_NOW), Int64(delay * Double(NSEC_PER_SEC))
-        ).after(
-        DispatchTime.nowwhen: DispatchQueue.main(), execute: closure)
 }

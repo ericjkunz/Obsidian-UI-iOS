@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public extension UIAlertController {
 
@@ -19,8 +19,8 @@ public extension UIAlertController {
 
     */
     public convenience init(errorString: String) {
-        self.init(title: L("Error"), message: errorString, preferredStyle: .Alert)
-        let action = UIAlertAction(title: L("OK"), style: .Cancel, handler: nil)
+        self.init(title: L("Error"), message: errorString, preferredStyle: .alert)
+        let action = UIAlertAction(title: L("OK"), style: .cancel, handler: nil)
         addAction(action)
     }
 

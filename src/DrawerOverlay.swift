@@ -37,7 +37,7 @@ private final class DrawerPresentationController: UIPresentationController {
 
     private init(presentedViewController: UIViewController!, presentingViewController: UIViewController!, side: DrawerSide) {
         self.side = side
-        super(presentedViewController: presentedViewController, presenting: presentingViewController)
+        super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
 
     // MARK: Presentation
@@ -74,7 +74,7 @@ private final class DrawerPresentationController: UIPresentationController {
 
     }
 
-    private override func dismissalTransitionDidEnd(completed: Bool) {
+    private override func dismissalTransitionDidEnd(_ completed: Bool) {
         super.dismissalTransitionDidEnd(completed)
         dimmingView.removeFromSuperview()
     }
@@ -111,11 +111,11 @@ private final class DrawerAnimationController: NSObject, UIViewControllerAnimate
         super.init()
     }
 
-    @objc private func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+    @objc private func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return DrawerPresentationControllerConstants.AnimationDuration
     }
 
-    @objc private func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
+    @objc private func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 
         let fromController = transitionContext.viewController(forKey: UITransitionContextFromViewControllerKey)
         let toController = transitionContext.viewController(forKey: UITransitionContextToViewControllerKey)
@@ -139,9 +139,9 @@ private final class DrawerAnimationController: NSObject, UIViewControllerAnimate
             targetController.view.frame = presenting ? originFrame : destinationFrame
             transitionContext.containerView().addSubview(targetController.view)
 
-            let duration = transitionDuration(transitionContext)
+            let duration = transitionDuration(using: transitionContext)
 
-            UIView.animateWithDuration(duration, animations: { () -> Void in
+            UIView.animate(withDuration: duration, animations: { () -> Void in
                 targetController.view.frame = self.presenting ? destinationFrame : originFrame
                 }, completion: { (finished) -> Void in
                     transitionContext.completeTransition(finished)
@@ -178,7 +178,7 @@ private final class _DrawerTransitioningDelegate: NSObject, UIViewControllerTran
 
 private var delegates: [DrawerSide : UIViewControllerTransitioningDelegate] = [:]
 
-func DrawerTransitioningDelegate(side: DrawerSide) -> UIViewControllerTransitioningDelegate {
+func DrawerTransitioningDelegate(from: DrawerSide) -> UIViewControllerTransitioningDelegate {
     let delegate = delegates[side] ?? _DrawerTransitioningDelegate(side: side)
     delegates[side] = delegate
     return delegate

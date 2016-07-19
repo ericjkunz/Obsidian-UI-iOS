@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public extension UINavigationController {
 
@@ -20,7 +20,7 @@ public extension UINavigationController {
     */
     public func replace(find: UIViewController, replace: UIViewController, animated: Bool) {
         var vcs = self.viewControllers
-        if let index = search(vcs, predicate: { $0 === find }) {
+        if let index = search(source: vcs, predicate: { $0 === find }) {
             vcs[index] = replace
         }
         setViewControllers(vcs, animated: animated)

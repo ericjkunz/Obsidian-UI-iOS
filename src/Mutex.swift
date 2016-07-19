@@ -10,7 +10,7 @@ import Foundation
 
 public struct MutexPool {
 
-    private let semaphore: dispatch_semaphore_t
+    private let semaphore: DispatchSemaphore
 
     // MARK: Initialization
 
@@ -23,7 +23,7 @@ public struct MutexPool {
 
     */
     public init(poolSize: Int = 1) {
-        semaphore = dispatch_semaphore_create(poolSize)
+        semaphore = DispatchSemaphore(value: poolSize)
     }
 
     /**
@@ -32,13 +32,13 @@ public struct MutexPool {
     - parameter timeout: When to timeout (see dispatch_time). The constants DISPATCH_TIME_NOW and DISPATCH_TIME_FOREVER are available as a convenience.
 
     */
-    public func wait(timeout: dispatch_time_t = DISPATCH_TIME_FOREVER) {
-        dispatch_semaphore_wait(semaphore, timeout)
+    public func wait(timeout: DispatchTime = DispatchTime.distantFuture) {
+        _ = semaphore.wait(timeout: timeout)
     }
 
     /// Frees a used resource in the pool
     public func signal() {
-        dispatch_semaphore_signal(semaphore)
+        semaphore.signal()
     }
 
     /**

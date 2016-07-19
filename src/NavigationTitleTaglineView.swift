@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 ///A view meant for UINavigationItem's titleView. Has two labels - one larger(title) and one below and smaller(tagline).
 public class TitleTaglineView: UIView {
@@ -21,10 +21,10 @@ public class TitleTaglineView: UIView {
     public var tagline = "Tagline"
 
     /// Font of the title label.
-    public var titleFont = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
+    public var titleFont = UIFont.preferredFont(forTextStyle: UIFontTextStyleHeadline)
 
     /// Font of the tagline label.
-    public var taglineFont = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
+    public var taglineFont = UIFont.preferredFont(forTextStyle: UIFontTextStyleSubheadline)
 
     /**
     Initializes an ALFTitleTaglineView
@@ -46,15 +46,15 @@ public class TitleTaglineView: UIView {
 
     override public func layoutSubviews() {
         let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: titleHeight))
-        titleLabel.textColor = UIColor.whiteColor()
-        titleLabel.textAlignment = NSTextAlignment.Center
+        titleLabel.textColor = UIColor.white()
+        titleLabel.textAlignment = NSTextAlignment.center
         titleLabel.font = titleFont
         titleLabel.text = title
         addSubview(titleLabel)
 
         let taglineLabel = UILabel(frame: CGRect(x: 0, y: titleHeight, width: frame.size.width, height: frame.size.height - titleHeight))
-        taglineLabel.textColor = UIColor.whiteColor()
-        taglineLabel.textAlignment = NSTextAlignment.Center
+        taglineLabel.textColor = UIColor.white()
+        taglineLabel.textAlignment = NSTextAlignment.center
         taglineLabel.font = taglineFont
         taglineLabel.text = tagline
         addSubview(taglineLabel)

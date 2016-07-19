@@ -6,7 +6,7 @@
 //  Copyright © 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public struct Action {
 
@@ -55,7 +55,7 @@ public struct Action {
     - returns: An Action object
 
     */
-    public init(title: String, textColor: UIColor = UIColor.blackColor(), highlightedTextColor: UIColor? = nil, backgroundColor: UIColor = UIColor.whiteColor(), highlightedBackgroundColor: UIColor? = nil, height: CGFloat = 64, font: UIFont = UIFont.boldSystemFontOfSize(20.0), handler: Handler?) {
+    public init(title: String, textColor: UIColor = UIColor.black(), highlightedTextColor: UIColor? = nil, backgroundColor: UIColor = UIColor.white(), highlightedBackgroundColor: UIColor? = nil, height: CGFloat = 64, font: UIFont = UIFont.boldSystemFont(ofSize: 20.0), handler: Handler?) {
         self.title = title
         self.textColor = textColor
         self.highlightedTextColor = highlightedTextColor ?? textColor
@@ -97,7 +97,7 @@ private class ActionSheetPresentationController: UIPresentationController {
 
         let coordinator = presentingViewController.transitionCoordinator()
 
-        coordinator?.animateAlongsideTransition({ (context) in
+        coordinator?.animate(alongsideTransition: { (context) in
             self.dimmingView.alpha = 1.0
             }, completion: nil)
 
@@ -107,7 +107,7 @@ private class ActionSheetPresentationController: UIPresentationController {
 
         let coordinator = presentingViewController.transitionCoordinator()
 
-        coordinator?.animateAlongsideTransition({ (context) in
+        coordinator?.animate(alongsideTransition: { (context) in
             self.dimmingView.alpha = 0.0
             }, completion: nil)
 
@@ -138,8 +138,8 @@ private class ActionSheetPresentationController: UIPresentationController {
     // MARK: Actions
 
     private dynamic func dismissController(_ sender: UIGestureRecognizer) {
-        presentingViewController.dismissViewControllerAnimated(true) { () -> Void in
-            NotificationCenter.defaultCenter().postNotificationName("actionSheetDismissedByTapAbove", object: self)
+        presentingViewController.dismiss(animated: true) { () -> Void in
+            NotificationCenter.default.post(name: "actionSheetDismissedByTapAbove" as NSNotification.Name, object: self)
         }
     }
 
@@ -174,7 +174,7 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
     private struct ActionSheetControllerConstants {
         static let DimmingColor = UIColor(red:0.14, green:0.14, blue:0.15, alpha:0.7)
-        static let ButtonDimmingColor = UIColor.whiteColor().colorWithAlphaComponent(0.1)
+        static let ButtonDimmingColor = UIColor.white().withAlphaComponent(0.1)
     }
 
     // MARK: Private Properties
@@ -195,7 +195,7 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
         actions = actionSheetActions.reversed()
         super.init(nibName: nil, bundle: nil)
         transitioningDelegate = self
-        modalPresentationStyle = .Custom
+        modalPresentationStyle = .custom
     }
 
     /// :nodoc:
@@ -234,21 +234,21 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
         // Create the buttons
 
         buttons = actions.map({ action -> UIButton in
-            let button = ColorButton(type: .Custom)
+            let button = ColorButton(type: .custom)
 
             button.translatesAutoresizingMaskIntoConstraints = false
 
-            button.setTitle(action.title, forState: .Normal)
+            button.setTitle(action.title, for: .normal)
 
-            button.setTitleColor(action.textColor, forState: .Normal)
-            button.setTitleColor(action.highlightedTextColor, forState: .Highlighted)
+            button.setTitleColor(action.textColor, for: .normal)
+            button.setTitleColor(action.highlightedTextColor, for: .highlighted)
 
-            button.setBackgroundColor(action.backgroundColor, forState: .Normal)
-            button.setBackgroundColor(action.highlightedBackgroundColor, forState: .Highlighted)
+            button.setBackgroundColor(color: action.backgroundColor, forState: .normal)
+            button.setBackgroundColor(color: action.highlightedBackgroundColor, forState: .highlighted)
 
             button.titleLabel?.font = action.font
 
-            addHandler(button, events: .TouchUpInside, target: self, handler: self.dynamicType.buttonSelected)
+            addHandler(control: button, events: .touchUpInside, target: self, handler: self.dynamicType.buttonSelected)
 
             return button
         })
@@ -261,7 +261,7 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
         let horizontalConstraints = buttons.reduce([NSLayoutConstraint]()) { arr, button in
             let views = [ "button" : button ]
-            let constraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[button]-0-|", options: [], metrics: nil, views: views)
+            let constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[button]-0-|", options: [], metrics: nil, views: views)
             return arr + constraints
         }
 
@@ -269,7 +269,7 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
         // Constrain the buttons vertically
 
-        let verticalConstraints = buttons.enumerate().reduce([NSLayoutConstraint]()) { arr, el in
+        let verticalConstraints = buttons.enumerated().reduce([NSLayoutConstraint]()) { arr, el in
             let action = self.actions[el.index]
             let pin = el.index == 0 ? self.view : buttons[el.index - 1]
             let targetAttribute: NSLayoutAttribute = el.index == 0 ? .Bottom : .Top
@@ -291,9 +291,9 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
     private func buttonSelected(_ sender: UIButton) {
         selectedButton = true
-        if let index = buttons.indexOf(sender) {
+        if let index = buttons.index(of: sender) {
             let action = actions[index]
-            dismissViewControllerAnimated(true) {
+            dismiss(animated: true) {
                 action.handler?(action: action)
             }
         }
@@ -305,8 +305,8 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
     // MARK: UIViewControllerTransitioningDelegate
 
-    public func presentationControllerForPresentedViewController(_ presented: UIViewController, presentingViewController presenting: UIViewController, sourceViewController source: UIViewController) -> UIPresentationController? {
-        let controller = ActionSheetPresentationController(presentedViewController: presented, presentingViewController: presenting)
+    public func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let controller = ActionSheetPresentationController(presentedViewController: presented, presenting: presenting)
         controller.height = actions.reduce(0) { $0 + $1.height }
         return controller
     }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import QuartzCore
 
 /**
  Setting the text of this label animates the characters in
@@ -45,11 +46,11 @@ public class RollerLabel: CharacterLabel {
             
             super.attributedText = newValue
             
-            lowestNotMatchingIndex = lowestNotMatchingCharacterIndex(newValue!.string)
+            lowestNotMatchingIndex = lowestNotMatchingCharacterIndex(newString: newValue!.string)
             
             if animate {
-                self.animateOut(nil)
-                self.animateIn(nil)
+                self.animateOut()
+                self.animateIn()
             } else {
                 changeWithoutAnimation()
             }
@@ -79,7 +80,7 @@ public class RollerLabel: CharacterLabel {
                 let translation = CATransform3DMakeTranslation(0, textLayer.bounds.height, 0)
                 textLayer.transform = translation
                 
-                LayerAnimation.animation(textLayer, duration:self.animationDuration, delay:TimeInterval(count += 1) * self.characterAnimationDelay, animations: {
+                LayerAnimation.animation(layer: textLayer, duration:self.animationDuration, delay:TimeInterval(count += 1) * self.characterAnimationDelay, animations: {
                     textLayer.transform = CATransform3DIdentity
                     textLayer.opacity = 1
                     }, completion: { finished in
@@ -94,12 +95,12 @@ public class RollerLabel: CharacterLabel {
     private func animateOut(completion: ((finished: Bool) -> Void)? = nil) {
         var count = 1
         
-        for var index = oldCharacterTextLayers.count - 1; index >= lowestNotMatchingIndex!; index -= 1 {
+        for index in (lowestNotMatchingIndex!..<oldCharacterTextLayers.count).reversed() {
             let textLayer = oldCharacterTextLayers[index]
             textLayer.transform = CATransform3DIdentity
             let translation = CATransform3DMakeTranslation(0, -textLayer.bounds.height, 0)
             
-            LayerAnimation.animation(textLayer, duration:self.animationDuration, delay:TimeInterval(count++) * self.characterAnimationDelay, animations: {
+            LayerAnimation.animation(layer: textLayer, duration:self.animationDuration, delay:TimeInterval(count++) * self.characterAnimationDelay, animations: {
                 textLayer.transform = translation
                 textLayer.opacity = 0
                 }, completion: { finished in
@@ -146,9 +147,9 @@ public class RollerLabel: CharacterLabel {
             return 0
         }
         
-        for var index = characterTextLayers.count - 1; index >= 0; index -= 1 {
+        for index in (0..<characterTextLayers.count).reversed() {
             
-            guard let oldCharacter = oldCharacterTextLayers[index].string as? AttributedString, newCharacter = characterTextLayers[index].string as? AttributedString else {
+            guard let oldCharacter = oldCharacterTextLayers[index].string as? AttributedString, let newCharacter = characterTextLayers[index].string as? AttributedString else {
                 return nil
             }
             

@@ -196,10 +196,10 @@ public class InputTextField: UITextField, UITextFieldDelegate {
 
             if !valid && validity {
                 valid = true
-                validityDelegate?.inputDidBecomeValid(self)
+                validityDelegate?.inputDidBecomeValid(field: self)
             } else if valid && !validity {
                 valid = false
-                validityDelegate?.inputDidBecomeInvalid(self)
+                validityDelegate?.inputDidBecomeInvalid(field: self)
             }
         }
 

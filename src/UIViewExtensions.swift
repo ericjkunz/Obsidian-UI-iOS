@@ -36,7 +36,7 @@ public extension UIView {
     public func makeCircular() {
         let w = round((width + height) / 2.0)
         let radius = round(w / 2.0)
-        roundCorners(radius)
+        roundCorners(to: radius)
     }
 
     /**
@@ -46,7 +46,7 @@ public extension UIView {
     - parameter mask: Whether or not the underlying layer should mask to its bounds
 
     */
-    public func roundCorners(radius: CGFloat, mask: Bool = true) {
+    public func roundCorners(to radius: CGFloat, mask: Bool = true) {
         layer.cornerRadius = radius
         layer.masksToBounds = mask
     }
@@ -96,12 +96,12 @@ public extension UIView {
     // MARK: Search
 
     /// Returns a superview (by walking up the chain) of type klass
-    public func findSuperview<T: UIView>(klass: UIView.Type) -> T? {
+    public func findSuperview<T: UIView>(ofType klass: UIView.Type) -> T? {
         if let s = superview {
-            if s.isKindOfClass(klass) {
+            if s.isKind(of: klass) {
                 return s as? T
             } else {
-                return s.findSuperview(klass)
+                return s.findSuperview(ofType: klass)
             }
         }
         return nil

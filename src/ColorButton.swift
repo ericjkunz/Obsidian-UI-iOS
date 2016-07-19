@@ -40,7 +40,7 @@ import UIKit
         
         if state == .normal && backgroundImage(for: .highlighted) == nil {
             let highlightedColor = blendColor(color, ColorButton.ButtonDimmingColor, -, true).image
-            setBackgroundImage(highlightedColor, forState: .Highlighted)
+            setBackgroundImage(highlightedColor, for: .highlighted)
         }
         
     }

@@ -284,18 +284,18 @@ extension CGRect {
     // MARK: sizes
 
     /// Returns a rect of the specified size centered in this rect.
-    public func rectByCentering(size: CGSize) -> CGRect {
+    public func rectByCentering(_ size: CGSize) -> CGRect {
         let dx = width - size.width
         let dy = height - size.height
         return CGRect(x: x + dx * 0.5, y: y + dy * 0.5, width: size.width, height: size.height)
     }
 
     /// Returns a rect of the specified size centered in this rect touching the specified edge.
-    public func rectByCentering(size: CGSize, alignTo edge: CGRectEdge) -> CGRect {
+    public func rectByCentering(_ size: CGSize, alignTo edge: CGRectEdge) -> CGRect {
         return CGRect(origin: alignedOrigin(size, edge: edge), size: size)
     }
 
-    private func alignedOrigin(size: CGSize, edge: CGRectEdge) -> CGPoint {
+    private func alignedOrigin(_ size: CGSize, edge: CGRectEdge) -> CGPoint {
         let dx = width - size.width
         let dy = height - size.height
         switch edge {
@@ -311,11 +311,11 @@ extension CGRect {
     }
 
     /// Returns a rect of the specified size centered in this rect touching the specified corner.
-    public func rectByAligning(size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) -> CGRect {
-        return CGRect(origin: alignedOrigin(corner: e1, e2, size), size: size)
+    public func rectByAligning(_ size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) -> CGRect {
+        return CGRect(origin: alignedOrigin(size, corner: e1, e2), size: size)
     }
 
-    private func alignedOrigin(size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) -> CGPoint {
+    private func alignedOrigin(_ size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) -> CGPoint {
         let dx = width - size.width
         let dy = height - size.height
         switch (e1, e2) {
@@ -344,7 +344,7 @@ extension CGRect {
 
     /// Modifies all values by setting the size while centering the rect touching the specified corner.
     public mutating func setSizeAligned(size: CGSize, corner e1: CGRectEdge, _ e2: CGRectEdge) {
-        self = rectByAligning(corner: e1, e2, size)
+        self = rectByAligning(size, corner: e1, e2)
     }
 }
 

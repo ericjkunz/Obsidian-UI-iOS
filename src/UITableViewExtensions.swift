@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension UITableView {
 
@@ -19,9 +20,9 @@ extension UITableView {
 
     */
     public func registerCellNib(name: String) {
-        let nib = NibCache[name] ?? UINib(nibName: name, bundle: NSBundle.mainBundle())
+        let nib = NibCache[name] ?? UINib(nibName: name, bundle: Bundle.main)
         NibCache[name] = nib
-        registerNib(nib, forCellReuseIdentifier: name)
+        register(nib, forCellReuseIdentifier: name)
     }
 
     /// Adds an empty footer view.  This has the effect of hiding extra cell separators.
@@ -49,8 +50,8 @@ extension UITableView {
         }
 
         let animations = { () -> () in
-            let animation: UITableViewRowAnimation = animated ? .Automatic : .None
-            self.reloadSections(indexSet, withRowAnimation: animation)
+            let animation: UITableViewRowAnimation = animated ? .automatic : .none
+            self.reloadSections(indexSet as IndexSet, with: animation)
         }
 
         if animated {

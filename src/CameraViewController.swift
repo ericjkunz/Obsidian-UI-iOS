@@ -109,7 +109,7 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
         flashButton?.isHidden = true
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
     }

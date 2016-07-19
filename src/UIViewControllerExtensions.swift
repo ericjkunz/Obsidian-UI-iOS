@@ -33,7 +33,7 @@ extension UIViewController {
     public func presentDrawer(controller: UIViewController, side: DrawerSide = .Right, navigationController: UINavigationController? = UINavigationController()) {
         navigationController?.viewControllers = [controller]
         let presented = navigationController ?? controller
-        presented.transitioningDelegate = DrawerTransitioningDelegate(side)
+        presented.transitioningDelegate = DrawerTransitioningDelegate(from: side)
         presented.modalPresentationStyle = .custom
         presented.present(self)
     }
@@ -44,7 +44,7 @@ extension UIViewController {
     - parameter sourceController: The controller from which the receiver should be presented.
 
     */
-    public func present(sourceController: UIViewController) {
+    public func present(_ sourceController: UIViewController) {
         sourceController.present(self, animated: true, completion: nil)
     }
 
@@ -73,7 +73,7 @@ extension UIViewController {
 
         controller.addAction(ok)
 
-        let cancel = UIAlertAction(title: L("Cancel"), style: .Cancel) { (action) -> Void in
+        let cancel = UIAlertAction(title: L("Cancel"), style: .cancel) { (action) -> Void in
             completion(value: nil)
         }
 
@@ -102,7 +102,7 @@ extension UIViewController {
 
         controller.addAction(confirm)
 
-        let cancel = UIAlertAction(title: L("Cancel"), style: .Cancel) { action in
+        let cancel = UIAlertAction(title: L("Cancel"), style: .cancel) { action in
             completion(confirmed: false)
         }
 
@@ -149,7 +149,7 @@ extension UIViewController {
     public func showActivityIndicator(identifier: String = Constants.DefaultIndicatorName, disableScrollingIfNeeded: Bool = true, constrainToView constraint: UIView? = nil) {
 
         guard findActivityIndicator() == nil else {
-            Logger.error("Trying to add an activity indicator to \(view) but there already is one!")
+            Logger.error(closure: "Trying to add an activity indicator to \(view) but there already is one!")
             return
         }
 
@@ -176,7 +176,7 @@ extension UIViewController {
 
         activityIndicator.startAnimating()
 
-        if let scrollView = view as? UIScrollView where disableScrollingIfNeeded {
+        if let scrollView = view as? UIScrollView, disableScrollingIfNeeded {
             scrollView.isScrollEnabled = false
         }
 
@@ -193,7 +193,7 @@ extension UIViewController {
     */
     public func hideActivityIndicator(enableScrollingIfNeeded: Bool = true) {
 
-        if let scrollView = view as? UIScrollView where enableScrollingIfNeeded {
+        if let scrollView = view as? UIScrollView , enableScrollingIfNeeded == true {
             scrollView.isScrollEnabled = true
         }
 

@@ -76,33 +76,33 @@ public struct Logger {
 
     /// Log the passed string at the verbose level
     
-    public static func verbose(@autoclosure @noescape closure: () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        log(.Verbose, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    public static func verbose( closure: @autoclosure () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        log(level: .Verbose, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
 
     /// Log the passed string at the debug level
-    public static func debug(@autoclosure @noescape closure: () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        log(.Debug, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    public static func debug( closure: @autoclosure () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        log(level: .Debug, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
 
     /// Log the passed string at the info level
-    public static func info(@autoclosure @noescape closure: () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        log(.Info, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    public static func info( closure: @autoclosure () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        log(level: .Info, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
 
     /// Log the passed string at the warning level
-    public static func warning(@autoclosure @noescape closure: () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        log(.Warning, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    public static func warning( closure: @autoclosure () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        log(level: .Warning, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
 
     /// Log the passed string at the error level
-    public static func error(@autoclosure @noescape closure: () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        log(.Error, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    public static func error( closure: @autoclosure () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        log(level: .Error, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
 
     /// Log the passed string at the severe level
-    public static func severe(@autoclosure @noescape closure: () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-        log(.Severe, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    public static func severe( closure: @autoclosure () -> String?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+        log(level: .Severe, date: Date(), logMessage: closure(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
     }
 
     internal static func log(level: LogLevel, date: NSDate, logMessage: String?, functionName: String, fileName: String, lineNumber: Int) {
@@ -115,7 +115,7 @@ public struct Logger {
             var details = ""
 
             if self.showDate {
-                details += self.dateFormatter.stringFromDate(date) + " "
+                details += self.dateFormatter.string(from: date as Date) + " "
             }
 
             if self.showLogLevel {

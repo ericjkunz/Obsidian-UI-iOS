@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import UIKit
 
 public extension UIColor {
 
     /// Returns a 1x1pt image filled with the receiver's color
-    public var image: UIImage {
+    public var image: UIImage? {
         let rect = CGRect(origin: CGPoint.zero, size: CGSize(width: 1, height: 1))
         UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
         setFill()
@@ -34,9 +35,9 @@ Blends two UIColors
 - returns: The UIColor resulting from the blend operation
 
 */
-public func blendColor(color1: UIColor, _ color2: UIColor, _ mode: ((CGFloat, CGFloat) -> CGFloat), _ premultiplyAlpha: Bool = false) -> UIColor {
+public func blendColor(_ color1: UIColor, _ color2: UIColor, _ mode: ((CGFloat, CGFloat) -> CGFloat), _ premultiplyAlpha: Bool = false) -> UIColor {
 
-    func transform(a: CGFloat, _ b: CGFloat) -> CGFloat {
+    func transform(_ a: CGFloat, _ b: CGFloat) -> CGFloat {
         return min(1.0, max(0.0, mode(a, b)))
     }
 

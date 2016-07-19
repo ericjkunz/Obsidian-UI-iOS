@@ -70,7 +70,8 @@ import CoreText
         let wordRange = NSRange(location: 0, length: attributedText.length)
         let attributedString = self.internalAttributedText()
 
-        for var index = wordRange.location; index < wordRange.length+wordRange.location; index += 0 {
+        var index = 0
+        while wordRange.location..<wordRange.length+wordRange.location ~= index {
             let glyphRange = NSRange(location: index, length:  1)
             let characterRange = layoutManager.characterRange(forGlyphRange: glyphRange, actualGlyphRange:nil)
             let textContainer = layoutManager.textContainer(forGlyphAt: index, effectiveRange: nil)
@@ -84,7 +85,6 @@ import CoreText
                 frame.size.width += (glyphRect.maxX+location.x)-frame.maxX
                 previousLayer.frame = frame
             }
-
 
             glyphRect.origin.y += location.y-(glyphRect.height/2)
             let textLayer = CATextLayer(frame: glyphRect, string: (attributedString?.attributedSubstring(from: characterRange))!)
