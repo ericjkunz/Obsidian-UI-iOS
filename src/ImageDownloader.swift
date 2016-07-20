@@ -56,7 +56,7 @@ public final class ImageDownloader {
             return nil
         }
 
-        let request = URLRequest(url: url)
+        let request = URLRequest(url: url as URL)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
             if let e = error {

@@ -33,12 +33,12 @@ public class NibView: UIView {
     }
 
     private func commonInit() {
-        loadNib(nibName)
+        loadNib(named: nibName)
     }
 
     // MARK: Nib Loading
 
-    private func loadNib(name: String) {
+    private func loadNib(named name: String) {
         guard let loadedView = Bundle.main.loadNibNamed(name, owner: self, options: nil)?.first as? UIView else {
             fatalError("Failed to load nib named: \(name)")
         }

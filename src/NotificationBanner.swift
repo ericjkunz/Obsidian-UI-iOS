@@ -6,25 +6,25 @@
 //  Copyright © 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 ///This delegate responds to taps on the banner view.
 public protocol NotificationBannerDelegate {
 
     /// Called when the banner is tapped
-    func bannerTapped(banner: NotificationBanner)
+    func tapped(banner: NotificationBanner)
 
     /// Called when the banner begins to animage-in
-    func willBeginDisplayingBanner(banner: NotificationBanner)
+    func willBeginDisplaying(banner: NotificationBanner)
 
     /// Called when the banner is done animating-in
-    func didDisplayBanner(banner: NotificationBanner)
+    func didDisplay(banner: NotificationBanner)
 
     /// Called when the banner begins to animate-out
-    func willEndDisplayingBanner(banner: NotificationBanner)
+    func willEndDisplaying(banner: NotificationBanner)
 
     /// Called when the banner has fully animated-out
-    func didEndDisplayingBanner(banner: NotificationBanner)
+    func didEndDisplaying(banner: NotificationBanner)
 }
 
 /**
@@ -86,14 +86,14 @@ public class NotificationBanner: FloatingView {
     // MARK: Initialization
 
     /// :nodoc:
-    public init(message: String, color: UIColor = UIColor.darkGrayColor(), textColor: UIColor = UIColor.whiteColor(), height: CGFloat = 35, duration: Double = 3.0) {
+    public init(message: String, color: UIColor = UIColor.darkGray(), textColor: UIColor = .white(), height: CGFloat = 35, duration: Double = 3.0) {
         super.init(frame: CGRect.zero)
         commonInit()
         configureBanner(color: color, textColor: textColor, message: message, duration: duration, height: height)
     }
 
     /// :nodoc:
-    convenience public override init() {
+    convenience public init() {
         self.init(frame: CGRect.zero)
         commonInit()
     }
@@ -111,11 +111,11 @@ public class NotificationBanner: FloatingView {
     }
 
     private func commonInit() {
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleTap")
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         addGestureRecognizer(tapRecognizer)
 
         addSubview(label)
-        label.textAlignment = NSTextAlignment.Center
+        label.textAlignment = .center
     }
 
     // MARK: Presentation
@@ -129,10 +129,10 @@ public class NotificationBanner: FloatingView {
     public func presentInNavigationController(navigationController: UINavigationController) {
         let view = navigationController.view
         let topBarHeight = navigationController.navigationBar.frame.height
-        frame = CGRect(0, -topBarHeight, view.width, height)
-        view.insertSubview(self, belowSubview: navigationController.navigationBar)
+        frame = CGRect(0, -topBarHeight, (view?.width)!, height)
+        view?.insertSubview(self, belowSubview: navigationController.navigationBar)
 
-        show(topOfView: UIApplication.sharedApplication().statusBarFrame.height + navigationController.navigationBar.frame.height, width: view.width, height: height + topBarHeight)
+        show(topOfView: UIApplication.shared().statusBarFrame.height + navigationController.navigationBar.frame.height, width: (view?.width)!, height: height + topBarHeight)
     }
 
     /**
@@ -144,10 +144,10 @@ public class NotificationBanner: FloatingView {
     */
     public func presentInNavigationController(navigationController: UINavigationController, originY: CGFloat) {
         let view = navigationController.view
-        frame = CGRect(0, -originY, view.width, height)
-        view.insertSubview(self, belowSubview: navigationController.navigationBar)
+        frame = CGRect(0, -originY, (view?.width)!, height)
+        view?.insertSubview(self, belowSubview: navigationController.navigationBar)
 
-        show(topOfView: originY, width: view.width, height: height + originY)
+        show(topOfView: originY, width: (view?.width)!, height: height + originY) // FIXME: These optionals
     }
 
     /**
@@ -163,7 +163,7 @@ public class NotificationBanner: FloatingView {
         show(topOfView: 0, width: view.width, height: height)
     }
 
-    private func configureBanner(color: UIColor = UIColor.darkGrayColor(), textColor: UIColor = UIColor.whiteColor(), message: String, duration: Double = 3.0, height: CGFloat = 35) {
+    private func configureBanner(color: UIColor = UIColor.darkGray(), textColor: UIColor = UIColor.white(), message: String, duration: Double = 3.0, height: CGFloat = 35) {
         text = message
         backgroundColor = color
         self.textColor = textColor
@@ -177,24 +177,24 @@ public class NotificationBanner: FloatingView {
         var visibleFrame = frame
         visibleFrame.origin.y = 0 + originY
 
-        delegate?.willBeginDisplayingBanner(self)
-        UIView.animateWithDuration(animationDuration, animations: { () -> Void in
+        delegate?.willBeginDisplaying(banner: self)
+        UIView.animate(withDuration: animationDuration, animations: { () -> Void in
             self.frame = visibleFrame
             }) { (finished) -> Void in
-                let _ = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: "animateOutBanner", userInfo: nil, repeats: false)
+                let _ = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(self.animateOutBanner), userInfo: nil, repeats: false)
         }
     }
 
     func animateOutBanner() {
-        delegate?.willEndDisplayingBanner(self)
+        delegate?.willEndDisplaying(banner: self)
 
         var hiddenFrame = frame
         hiddenFrame.origin.y = -(frame.height + 100)
 
-        UIView.animateWithDuration(self.animationDuration, delay: 0, options: UIViewAnimationOptions.TransitionNone, animations: { () -> Void in
+        UIView.animate(withDuration: self.animationDuration, delay: 0, options: .layoutSubviews, animations: { () -> Void in
             self.frame = hiddenFrame
             }, completion: { (finished) -> Void in
-                self.delegate?.didEndDisplayingBanner(self)
+                self.delegate?.didEndDisplaying(banner: self)
                 self.removeFromSuperview()
         })
     }
@@ -202,7 +202,7 @@ public class NotificationBanner: FloatingView {
     // MARK: Action
 
     func handleTap() {
-        delegate?.bannerTapped(self)
+        delegate?.tapped(banner: self)
     }
 
 }

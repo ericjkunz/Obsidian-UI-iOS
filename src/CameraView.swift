@@ -101,6 +101,6 @@ class CloseCross: UIButton {
         }
         let button = UIView(frame: buttonRect)
         button.makeCircular()
-        button.applyBorder(borderWidth, color: borderColor)
+        button.applyBorder(width: borderWidth, color: borderColor)
     }
 }

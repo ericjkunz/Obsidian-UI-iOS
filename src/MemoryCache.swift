@@ -27,10 +27,7 @@ public final class MemoryCache<K: AnyObject, T: AnyObject where K: Hashable> {
 
     // MARK: Private Properties
 
-    private let cache: Cache = {
-        let cache = NSCache()
-        return cache
-        }()
+    private let cache = Cache<K, T>()
 
     // MARK: Initialization
 
