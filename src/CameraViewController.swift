@@ -98,25 +98,18 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.sharedApplication().statusBarHidden = true
         flashButton?.isHidden = true
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.sharedApplication().statusBarHidden = false
         teardownSession()
     }
     
@@ -143,17 +136,17 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
     }
     
     private func didPressAcceptPhotoButton() {
-        delegate?.cameraControllerDidSelectImage(self, image: capturedImage!)
+        delegate?.cameraControllerDidSelectImage(camera: self, image: capturedImage!)
         teardownSession()
     }
     
     private func didPressRejectPhotoButton() {
         capturedImage = nil
-        showAcceptOrRejectView(false)
+        showAcceptOrRejectView(show: false)
     }
     
     private func didPressExitButton() {
-        delegate?.didCancelImageCapture(self)
+        delegate?.didCancelImageCapture(cameraController: self)
         teardownSession()
     }
     
@@ -163,9 +156,9 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
         }
     }
     
-    private func displayCapturedImage(image: UIImage) {
+    private func displayCapturedImage(_ image: UIImage) {
         capturedImageReview?.image = image
-        showAcceptOrRejectView(true)
+        showAcceptOrRejectView(show: true)
     }
     
     private func flashCamera() {
@@ -187,7 +180,7 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
     
     private func loadPhotoLibraryPreviewImage() {
         if let libraryButton = photoLibraryButton {
-            Photos.latestAsset(libraryButton.frame.size, contentMode: .AspectFill, completion: { (image: UIImage?) -> Void in
+            Photos.latestAsset(size: libraryButton.frame.size, contentMode: .aspectFill, completion: { (image: UIImage?) -> Void in
                 libraryButton.imageView?.image = image
             })
         }

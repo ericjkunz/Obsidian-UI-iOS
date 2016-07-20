@@ -51,7 +51,7 @@ public final class MemoryCache<K: AnyObject, T: AnyObject where K: Hashable> {
     /// Gets or sets the cached object for the passed key
     public subscript(key: K) -> T? {
         get {
-            return cache.objectForKey(key) as? T
+            return cache.object(forKey: key)
         }
         set {
             if let v = newValue {

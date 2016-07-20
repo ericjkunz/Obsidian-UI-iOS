@@ -68,7 +68,7 @@ public class RollerLabel: CharacterLabel {
         
         if let lowestIndex = lowestNotMatchingIndex {
             
-            var count = 1
+            var count = 1.0
             
             guard characterTextLayers.count - 1 > 0 else {
                 return
@@ -80,7 +80,10 @@ public class RollerLabel: CharacterLabel {
                 let translation = CATransform3DMakeTranslation(0, textLayer.bounds.height, 0)
                 textLayer.transform = translation
                 
-                LayerAnimation.animation(layer: textLayer, duration:self.animationDuration, delay:TimeInterval(count += 1) * self.characterAnimationDelay, animations: {
+                let delay = count * characterAnimationDelay; count += 1
+                let dispatchTime = DispatchWallTime.now() + DispatchTimeInterval.seconds(Int(delay))
+
+                _ = LayerAnimation.animation(layer: textLayer, duration:self.animationDuration, delay:dispatchTime, animations: {
                     textLayer.transform = CATransform3DIdentity
                     textLayer.opacity = 1
                     }, completion: { finished in
@@ -93,14 +96,17 @@ public class RollerLabel: CharacterLabel {
     }
     
     private func animateOut(completion: ((finished: Bool) -> Void)? = nil) {
-        var count = 1
+        var count = 1.0
         
         for index in (lowestNotMatchingIndex!..<oldCharacterTextLayers.count).reversed() {
             let textLayer = oldCharacterTextLayers[index]
             textLayer.transform = CATransform3DIdentity
             let translation = CATransform3DMakeTranslation(0, -textLayer.bounds.height, 0)
             
-            LayerAnimation.animation(layer: textLayer, duration:self.animationDuration, delay:TimeInterval(count++) * self.characterAnimationDelay, animations: {
+            let delay = count * characterAnimationDelay; count += 1
+            let dispatchTime = DispatchWallTime.now() + DispatchTimeInterval.seconds(Int(delay))
+            
+            _ = LayerAnimation.animation(layer: textLayer, duration:self.animationDuration, delay:dispatchTime, animations: {
                 textLayer.transform = translation
                 textLayer.opacity = 0
                 }, completion: { finished in

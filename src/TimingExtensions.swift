@@ -18,9 +18,9 @@ public extension TimeInterval {
     - parameter closure: The closure to execute after the delay
 
     */
-    public func delay(closure: () -> ()) {
-        let delayTime = DispatchTime.now(dispatch_time_t(DispatchTime.now), Int64(self * Double(NSEC_PER_SEC)))
-        delayTime.after(when: DispatchQueue.main(), execute: closure)
+    public func delay(closure: () -> Void) {
+        let time = DispatchTime.now() + DispatchTimeInterval.seconds(Int(self))
+        DispatchQueue.main.after(when: time, execute: closure)
     }
 
 }

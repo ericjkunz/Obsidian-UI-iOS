@@ -6,16 +6,16 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import AVFoundation
 
 public protocol CameraDelegate {
     
     /// Delegates receive this message whenever the camera captures and outputs a new video frame.
-    func cameraCaptureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!)
+    func cameraCaptureOutput(_ captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!)
     
     /// Delegates receive this message whenever a late video frame is dropped.
-    func cameracaptureOutput(captureOutput: AVCaptureOutput!, didDropSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!)
+    func cameracaptureOutput(_ captureOutput: AVCaptureOutput!, didDropSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!)
     
     /**
      This method is called after startRecording is called.
@@ -42,7 +42,7 @@ public protocol CameraDelegate {
 public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate {
     
     private var session = AVCaptureSession()
-    private var sessionQueue = dispatch_queue_create("AlfredoCameraSession", DISPATCH_QUEUE_SERIAL)
+    private var sessionQueue = DispatchQueue(label: "AlfredoCameraSession", attributes: .serial, target: nil)
     private var frontCamera: AVCaptureDevice?
     private var backCamera: AVCaptureDevice?
     private var currentCamera: AVCaptureDevice?
@@ -113,7 +113,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
         session.commitConfiguration()
         
         previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer?.backgroundColor = UIColor.blackColor().CGColor
+        previewLayer?.backgroundColor = UIColor.black().cgColor
         previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
         
         session.startRunning()
@@ -296,7 +296,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
      - parameter point: The location in the image that the camera will focus on
      
      */
-    public func focusAtPoint(point: CGPoint) {
+    public func focusAtPoint(_ point: CGPoint) {
         if let camera = currentCamera {
             if camera.isFocusPointOfInterestSupported {
                 camera.focusPointOfInterest = point
@@ -310,7 +310,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
      - parameter point: The location in the image that the camera will focus on
      
      */
-    public func exposeAtPoint(point: CGPoint) {
+    public func exposeAtPoint(_ point: CGPoint) {
         if let camera = currentCamera {
             if camera.isExposurePointOfInterestSupported {
                 camera.exposurePointOfInterest = point
@@ -350,7 +350,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     
     /// Captures an image from the camera and saves it to the photos library.
     public func captureImage() {
-        captureImage(nil)
+        captureImage()
     }
     
     /**
@@ -360,17 +360,17 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
      be saved to the photos library.
      
      */
-    public func captureImage(completion: ((capturedImage: UIImage) -> Void)?) {
+    public func captureImage(completion: ((capturedImage: UIImage) -> Void)? = nil) {
         stillImageOutput.captureStillImageAsynchronously(from: stillImageOutput.connection(withMediaType: AVMediaTypeVideo), completionHandler: { (sampleBuffer, error) -> Void in
             if sampleBuffer != nil {
                 
                 let data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
-                let image = UIImage(data: data)
+                let image = UIImage(data: data!)
                 if let capturedImage = image {
                     if let finishIt = completion {
                         finishIt(capturedImage: capturedImage)
                     } else {
-                        Photos.saveImage(image!, completion: nil)
+                        Photos.saveImage(image: image!)
                     }
                 }
             }
@@ -400,12 +400,12 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     
     // MARK: File Output Recording Delegate
     
-    public func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
-        delegate?.cameraDidFinishRecordingVideo(outputFileURL)
+    public func capture(_ captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAt outputFileURL: URL!, fromConnections connections: [AnyObject]!, error: NSError!) {
+        delegate?.cameraDidFinishRecordingVideo(movieURL: outputFileURL)
     }
     
-    public func captureOutput(captureOutput: AVCaptureFileOutput!, didStartRecordingToOutputFileAtURL fileURL: NSURL!, fromConnections connections: [AnyObject]!) {
-        delegate?.cameraDidStartRecordingVideo(NSURL(fileURLWithPath: outputPath))
+    public func capture(_ captureOutput: AVCaptureFileOutput!, didStartRecordingToOutputFileAt fileURL: URL!, fromConnections connections: [AnyObject]!) {
+        delegate?.cameraDidStartRecordingVideo(movieURL: NSURL(fileURLWithPath: outputPath))
     }
     
     // MARK: Sample Buffer Delegate

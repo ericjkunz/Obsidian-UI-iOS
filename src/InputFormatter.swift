@@ -121,10 +121,10 @@ class InputFormatter {
         let removedCharsCorrectedRange = NSRange(location: range.location + (newCursorPosition - cursorPosition), length: range.length)
         let (newText, _) = resultingString(noSpecialsString, newInput: newInput, range: removedCharsCorrectedRange, cursorPosition: newCursorPosition)
 
-        currencyFormatter.numberStyle = .DecimalStyle
+        currencyFormatter.numberStyle = .decimal
         let number = currencyFormatter.numberFromString(newText) ?? 0
         let newValue = NSNumber(double: number.doubleValue / 100.0)
-        currencyFormatter.numberStyle = .CurrencyStyle
+        currencyFormatter.numberStyle = .currency
         if let currencyString = currencyFormatter.stringFromNumber(newValue) {
             return (currencyString, cursorPosition + (currencyString.length - text.length))
         }
@@ -179,7 +179,7 @@ class InputFormatter {
         return limitToDigitsAndLength(4, text: text, newInput: newInput, range: range, cursorPosition: cursorPosition)
     }
 
-    private func limitToDigitsAndLength(length: Int, text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int) {
+    private func limitToDigitsAndLength(_ length: Int, text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int) {
         if newInput != "" {
             if text.length == length {
                 return (text, cursorPosition)
@@ -191,7 +191,7 @@ class InputFormatter {
         return resultingString(text, newInput: newInput, range: range, cursorPosition: cursorPosition)
     }
 
-    private func limitToLength(limit: Int) -> ((text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int)) {
+    private func limitToLength(_ limit: Int) -> ((text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int)) {
 
         func limitText(text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int) {
             if text.length == limit && newInput != "" {
@@ -203,7 +203,7 @@ class InputFormatter {
         return limitText
     }
 
-    private func limitToDigitsWithLength(limit: Int) -> ((text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int)) {
+    private func limitToDigitsWithLength(_ limit: Int) -> ((text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int)) {
 
         func limitText(text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int) {
             if newInput != "" {
@@ -218,11 +218,11 @@ class InputFormatter {
         return limitText
     }
 
-    private func limitToCharacterSet(set: NSCharacterSet) -> ((text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int)) {
+    private func limitToCharacterSet(_ set: NSCharacterSet) -> ((text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int)) {
 
         func limitToSet(text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int) {
             if newInput != "" {
-                guard newInput.rangeOfCharacterFromSet(set) != nil else {
+                guard newInput.rangeOfCharacter(from: set as CharacterSet, options: .caseInsensitive, range: nil) != nil else {
                     return (text, cursorPosition)
                 }
             }
@@ -236,13 +236,13 @@ class InputFormatter {
     // MARK: Validators
 
     private func validateCurrency(text: String) -> Bool {
-        currencyFormatter.numberStyle = .CurrencyStyle
+        currencyFormatter.numberStyle = .currency
         let number = currencyFormatter.number(from: text) ?? 0
 
         return number.doubleValue > 0.0
     }
 
-    private func isLength(length: Int) -> ((text: String) -> Bool) {
+    private func isLength(_ length: Int) -> ((text: String) -> Bool) {
 
         func checkLength(text: String) -> Bool {
             return text.length == length
@@ -257,13 +257,13 @@ class InputFormatter {
 
     // MARK:- Characters
 
-    private func isDigit(character: Character) -> Bool {
-        return isDigitOrCharacter("", character: character)
+    private func isDigit(_ c: Character) -> Bool {
+        return isDigitOrCharacter(additionalCharacters: "", character: c)
     }
 
     private func isDigitOrCharacter(additionalCharacters: String, character: Character) -> Bool {
         let digits = NSCharacterSet.decimalDigits
-        let fullSet = NSMutableCharacterSet(charactersInString: additionalCharacters)
+        let fullSet = NSMutableCharacterSet(charactersIn: additionalCharacters)
         fullSet.formUnion(with: digits)
 
         if isCharacter(character, aMemberOf: fullSet) {
@@ -272,7 +272,7 @@ class InputFormatter {
         return false
     }
 
-    func resultingString(text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int) {
+    func resultingString(_ text: String, newInput: String, range: NSRange, cursorPosition: Int) -> (String, Int) {
         guard range.location >= 0 else {
             return (text, cursorPosition)
         }
@@ -281,7 +281,7 @@ class InputFormatter {
         return (newText, cursorPosition + (newText.length - text.length))
     }
 
-    private func removeNonDigits(text: String, cursorPosition: Int) -> (String, Int) {
+    private func removeNonDigits(from text: String, cursorPosition: Int) -> (String, Int) {
         var originalCursorPosition = cursorPosition
         let theText = text
         var digitsOnlyString = ""
@@ -298,7 +298,7 @@ class InputFormatter {
         return (digitsOnlyString, originalCursorPosition)
     }
 
-    func insertCharactersAtIndexes(text: String, characters: [(Int, Character)], cursorPosition: Int) -> (String, Int) {
+    func insertCharactersAtIndexes(_ text: String, characters: [(Int, Character)], cursorPosition: Int) -> (String, Int) {
         var stringWithAddedChars = ""
         var newCursorPosition = cursorPosition
 
@@ -320,12 +320,12 @@ class InputFormatter {
         return (stringWithAddedChars, newCursorPosition)
     }
 
-    func isCharacter(c: Character, aMemberOf set: NSCharacterSet) -> Bool {
+    func isCharacter(_ c: Character, aMemberOf set: NSCharacterSet) -> Bool {
         return set.characterIsMember(String(c).utf16.first!)
     }
 
-    private func removeNonDigitsAndAddCharacters(text: String, newInput: String, range: NSRange, cursorPosition: Int, characters: [(Int, Character)]) -> (String, Int) {
-        let (onlyDigitsText, cursorPos) = removeNonDigits(text, cursorPosition: cursorPosition)
+    private func removeNonDigitsAndAddCharacters(_ text: String, newInput: String, range: NSRange, cursorPosition: Int, characters: [(Int, Character)]) -> (String, Int) {
+        let (onlyDigitsText, cursorPos) = removeNonDigits(from: text, cursorPosition: cursorPosition)
         let correctedRange = NSRange(location: range.location + (cursorPos - cursorPosition), length: range.length)
         let (newText, cursorAfterEdit) = resultingString(onlyDigitsText, newInput: newInput, range: correctedRange, cursorPosition: cursorPos)
         let (withCharacters, newCursorPosition) = insertCharactersAtIndexes(newText, characters: characters, cursorPosition: cursorAfterEdit)

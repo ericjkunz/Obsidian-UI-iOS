@@ -6,8 +6,9 @@
 //  Copyright (c) 2015 TENDIGI, LLC. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import AVFoundation
+import CoreImage
 
 public class FeatureDetection {
 
@@ -17,8 +18,8 @@ public class FeatureDetection {
     - returns: An array of detected faces.
 
     */
-    public func detectFacesInImage(image: CIImage) -> [CIFaceFeature] {
-        let features = detectFeaturesInImage(image)
+    public func detectFaces(in image: CIImage) -> [CIFaceFeature] {
+        let features = detectFeatures(in: image)
         var faces = [CIFaceFeature]()
         for feature in features {
             if let face = feature as? CIFaceFeature {
@@ -35,8 +36,11 @@ public class FeatureDetection {
     - returns: An array of detected faces.
 
     */
-    public func detectFacesInImage(image: UIImage) -> [CIFaceFeature] {
-        return detectFacesInImage(image.CIImage!)
+    public func detectFacesInImage(image: UIImage) -> [CIFaceFeature]? {
+        guard let ci = image.ciImage else {
+            return nil
+        }
+        return detectFaces(in: ci)
     }
 
     /**
@@ -45,9 +49,9 @@ public class FeatureDetection {
     - returns: An array of detected features.
 
     */
-    public func detectFeaturesInImage(image: CIImage) -> [CIFeature] {
+    public func detectFeatures(in image: CIImage) -> [CIFeature] {
         let detector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: [CIDetectorAccuracy : CIDetectorAccuracyLow, CIDetectorTracking : true])
-        return detector.featuresInImage(image)
+        return detector!.features(in: image)
     }
 
     /**
@@ -56,8 +60,8 @@ public class FeatureDetection {
     - returns: An array of detected features.
 
     */
-    public func detectFeaturesInImage(image: UIImage) -> [CIFeature] {
-        return detectFeaturesInImage(image.CIImage!)
+    public func detectFeatures(in image:UIImage) -> [CIFeature] {
+        return detectFeatures(in: image)
     }
 
     /**
@@ -77,10 +81,10 @@ public class FeatureDetection {
     - parameter mirrored: Is the video from the camera horizontally flipped for the preview.
 
     */
-    public func rectsForFeatures(features: [CIFeature], previewLayer: AVCaptureVideoPreviewLayer, cleanAperture: CGRect, mirrored: Bool) -> [CGRect] {
+    public func rects(for features: [CIFeature], previewLayer: AVCaptureVideoPreviewLayer, cleanAperture: CGRect, mirrored: Bool) -> [CGRect] {
         var featureRects = [CGRect]()
         for feature in features {
-            featureRects.append(rectForFeature(feature, previewLayer: previewLayer, cleanAperture: cleanAperture, mirrored: mirrored))
+            featureRects.append(rect(for: feature, in: previewLayer, cleanAperture: cleanAperture, mirrored: mirrored))
         }
         return featureRects
     }
@@ -102,8 +106,8 @@ public class FeatureDetection {
     - parameter mirrored: Is the video from the camera horizontally flipped for the preview.
 
     */
-    public func rectForFeature(feature: CIFeature, previewLayer: AVCaptureVideoPreviewLayer, cleanAperture: CGRect, mirrored: Bool) -> CGRect {
-        return locationOfFaceInView(feature.bounds, gravity: previewLayer.videoGravity, previewFrame: previewLayer.frame, cleanAperture: cleanAperture, mirrored: mirrored)
+    public func rect(for feature: CIFeature, in previewLayer: AVCaptureVideoPreviewLayer, cleanAperture: CGRect, mirrored: Bool) -> CGRect {
+        return locationOfFaceInView(featureBounds: feature.bounds, gravity: previewLayer.videoGravity, previewFrame: previewLayer.frame, cleanAperture: cleanAperture, mirrored: mirrored)
     }
 
     private func locationOfFaceInView(featureBounds: CGRect, gravity: String, previewFrame: CGRect, cleanAperture: CGRect, mirrored: Bool) -> CGRect {
