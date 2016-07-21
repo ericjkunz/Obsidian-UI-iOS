@@ -31,7 +31,9 @@ internal extension UIImage {
 
     internal func decodedImage(scale: CGFloat) -> UIImage? {
 
-        let imageRef: CGImage
+        guard let imageRef = cgImage else {
+            return nil
+        }
 
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)

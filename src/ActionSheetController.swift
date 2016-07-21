@@ -269,15 +269,16 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
 
         // Constrain the buttons vertically
 
-        let verticalConstraints = buttons.enumerated().reduce([NSLayoutConstraint]()) { arr, el in
-            let action = self.actions[el.index]
-            let pin = el.index == 0 ? self.view : buttons[el.index - 1]
-            let targetAttribute: NSLayoutAttribute = el.index == 0 ? .Bottom : .Top
+        let buttonsss = buttons.enumerated()
+        let verticalConstraints = buttonsss.reduce([NSLayoutConstraint]()) { (acc: [NSLayoutConstraint], enumerated: (offset: Int, element: UIButton)) -> [NSLayoutConstraint] in
+            let action = enumerated.element
+            let pin = enumerated.offset == 0 ? self.view : buttons[enumerated.offset - 1]
+            let targetAttribute: NSLayoutAttribute = enumerated.offset == 0 ? .bottom : .top
             let constraints = [
-                NSLayoutConstraint(item: el.element, attribute: .Bottom, relatedBy: .Equal, toItem: pin, attribute: targetAttribute, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: el.element, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: action.height)
+                NSLayoutConstraint(item: enumerated.element, attribute: .bottom, relatedBy: .equal, toItem: pin, attribute: targetAttribute, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: enumerated.element, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: action.height)
             ]
-            return arr + constraints
+            return acc + constraints
         }
 
         view.addConstraints(verticalConstraints)
