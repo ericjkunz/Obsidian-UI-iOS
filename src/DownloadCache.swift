@@ -68,10 +68,11 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
         var q: [T] = []
         
         queueMutex.perform {
-            q += Array(self.tasks.map({ (k, v) -> (String, T) in
-                return (k, v.item)
-            }).values)
-            return
+            q += self.tasks.map { (x: (key: String, value: (task: URLSessionDownloadTask, item: T))) -> (String, T) in
+                let key = x.key
+                let item = x.value.item
+                return (key, item)
+            }.values
         }
         
         return q
@@ -106,7 +107,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     public init(name: String, configuration: URLSessionConfiguration) {
         self.name = name
         sessionDelegate = SessionDelegate()
-        session = URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: OperationQueue.main())
+        session = Foundation.URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: OperationQueue.main)
         sessionDelegate.delegate = self
     }
     
