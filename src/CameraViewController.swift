@@ -98,7 +98,7 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -210,20 +210,26 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
         dismiss(animated: true, completion: { () -> Void in
             self.capturedImage = image
             self.displayCapturedImage(image)
-            UIApplication.shared().setStatusBarStyle(.lightContent, animated: true)
+            self.setStatusBar(to: .lightContent, animated: true)
+        })
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: { () -> Void in
+            self.setStatusBar(to: .lightContent, animated: true)
         })
     }
     
-    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        dismiss(animated: true, completion: { () -> Void in
-            UIApplication.shared().setStatusBarStyle(.lightContent, animated: true)
-        })
+    func setStatusBar(to style: UIStatusBarStyle, animated: Bool) {
+        UIView.animate(withDuration: animated ? 0 : CATransaction.animationDuration()) {
+            UIApplication.shared().statusBarStyle = .lightContent
+        }
     }
     
     // MARK: Navigation Controller Delegate
     
-    func navigationController(navigationController: UINavigationController, willShowViewController viewController: UIViewController, animated: Bool) {
-        UIApplication.shared().setStatusBarStyle(.lightContent, animated: true)
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        self.setStatusBar(to: .lightContent, animated: true)
     }
     
 }

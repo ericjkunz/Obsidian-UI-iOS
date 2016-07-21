@@ -183,7 +183,7 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
             session.addInput(videoDeviceInput)
         }
         
-        if let port = videoDeviceInput?.ports.first as? AVCaptureInputPort, preview = previewLayer {
+        if let port = videoDeviceInput?.ports.first as? AVCaptureInputPort, let preview = previewLayer {
             captureConnection = AVCaptureConnection(inputPort: port, videoPreviewLayer: preview)
         }
     }
@@ -410,12 +410,12 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
     
     // MARK: Sample Buffer Delegate
     
-    public func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
+    public func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, from connection: AVCaptureConnection!) {
         
         delegate?.cameraCaptureOutput(captureOutput, didOutputSampleBuffer: sampleBuffer, fromConnection: connection)
     }
     
-    public func captureOutput(captureOutput: AVCaptureOutput!, didDropSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
+    public func captureOutput(_ captureOutput: AVCaptureOutput!, didDrop sampleBuffer: CMSampleBuffer!, from connection: AVCaptureConnection!) {
         
         delegate?.cameracaptureOutput(captureOutput, didDropSampleBuffer: sampleBuffer, fromConnection: connection)
     }

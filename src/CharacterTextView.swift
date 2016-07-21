@@ -60,8 +60,8 @@ import CoreText
     func setupLayoutManager() {
         layoutManager.delegate = self
     }
-
-     func layoutManager(layoutManager: NSLayoutManager, didCompleteLayoutForTextContainer textContainer: NSTextContainer?, atEnd layoutFinishedFlag: Bool) {
+    
+    func layoutManager(_ layoutManager: NSLayoutManager, didCompleteLayoutFor textContainer: NSTextContainer?, atEnd layoutFinishedFlag: Bool) {
         calculateTextLayers()
     }
 

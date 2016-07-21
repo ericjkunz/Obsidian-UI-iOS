@@ -114,7 +114,7 @@ public class CharacterLabel: UILabel, NSLayoutManagerDelegate {
         }
     }
 
-    public func layoutManager(layoutManager: NSLayoutManager, didCompleteLayoutForTextContainer textContainer: NSTextContainer?, atEnd layoutFinishedFlag: Bool) {
+    public func layoutManager(_ layoutManager: NSLayoutManager, didCompleteLayoutFor textContainer: NSTextContainer?, atEnd layoutFinishedFlag: Bool) {
         calculateTextLayers()
     }
 

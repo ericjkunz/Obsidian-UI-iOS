@@ -50,7 +50,7 @@ private final class DrawerPresentationController: UIPresentationController {
         dimmingView.frame = containerView!.bounds
         dimmingView.alpha = 0.0
         
-        let tap = UITapGestureRecognizer(target: self, action: "dismissController:")
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissController(sender:)))
         dimmingView.addGestureRecognizer(tap)
         
         containerView!.addSubview(dimmingView)

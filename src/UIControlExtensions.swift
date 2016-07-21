@@ -35,7 +35,7 @@ Binds a closure to a UIControl's events
 public func addHandler<T: UIControl, U: AnyObject>(control: T, events: UIControlEvents, target: U, handler: (target: U) -> ((sender: T) -> ())) {
 
     let newClosure = { [weak target] (sender: UIControl) -> Void in
-        if let t = target, theSender = sender as? T {
+        if let t = target, let theSender = sender as? T {
             let h1 = handler(target: t)
             h1(sender: theSender)
         }
@@ -49,7 +49,7 @@ public func addHandler<T: UIControl, U: AnyObject>(control: T, events: UIControl
     let object: UIControl = control
 
     objc_setAssociatedObject(object, fakePointer, controlHandler, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-
-    control.addTarget(controlHandler, action: "call:", for: events)
+    
+    control.addTarget(controlHandler, action: #selector(controlHandler.call(sender:)), for: events)
 
 }
