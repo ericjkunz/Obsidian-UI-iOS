@@ -153,11 +153,11 @@ private final class DrawerAnimationController: NSObject, UIViewControllerAnimate
     
 }
 
-private final class _DrawerTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
+final class _DrawerTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
     
     private let side: DrawerSide
     
-    private init(side: DrawerSide) {
+    init(from side: DrawerSide) {
         self.side = side
         super.init()
     }
@@ -177,7 +177,7 @@ private final class _DrawerTransitioningDelegate: NSObject, UIViewControllerTran
     private var delegates: [DrawerSide : UIViewControllerTransitioningDelegate] = [:]
     
     func DrawerTransitioningDelegate(from: DrawerSide) -> UIViewControllerTransitioningDelegate {
-        let delegate = delegates[side] ?? _DrawerTransitioningDelegate(side: side)
+        let delegate = delegates[side] ?? _DrawerTransitioningDelegate(from: side)
         delegates[side] = delegate
         return delegate
     }

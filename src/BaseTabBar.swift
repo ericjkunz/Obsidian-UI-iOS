@@ -18,10 +18,10 @@ public class BaseTabBar: UIView {
     public func layout() {}
 
     /// A method called by the parent tab bar controller when the receiver should update its UI for a selected tab
-    public func selectTab(index: Int) {}
+    public func selectTab(_ index: Int) {}
 
     /// This method must be overridden to return the frame for the tab at the passed index
-    public func frameForTab(index: Int) -> CGRect {
+    public func frameForTab(_ index: Int) -> CGRect {
         return CGRect.zero
     }
 

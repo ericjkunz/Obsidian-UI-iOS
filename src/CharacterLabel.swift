@@ -149,7 +149,7 @@ public class CharacterLabel: UILabel, NSLayoutManagerDelegate {
 
 
             let textLayer = CATextLayer(frame: glyphRect, string: (attributedString?.attributedSubstring(from: characterRange))!)
-            initialTextLayerAttributes(textLayer)
+            initialTextLayerAttributes(textLayer: textLayer)
 
             layer.addSublayer(textLayer)
             characterTextLayers.append(textLayer)

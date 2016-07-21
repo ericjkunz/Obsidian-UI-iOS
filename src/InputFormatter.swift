@@ -117,15 +117,15 @@ class InputFormatter {
             }
         }
 
-        let (noSpecialsString, newCursorPosition) = removeNonDigits(text, cursorPosition: cursorPosition)
+        let (noSpecialsString, newCursorPosition) = removeNonDigits(from: text, cursorPosition: cursorPosition)
         let removedCharsCorrectedRange = NSRange(location: range.location + (newCursorPosition - cursorPosition), length: range.length)
         let (newText, _) = resultingString(noSpecialsString, newInput: newInput, range: removedCharsCorrectedRange, cursorPosition: newCursorPosition)
 
         currencyFormatter.numberStyle = .decimal
-        let number = currencyFormatter.numberFromString(newText) ?? 0
-        let newValue = NSNumber(double: number.doubleValue / 100.0)
+        let number = currencyFormatter.number(from: newText) ?? 0
+        let newValue = NSNumber(value: number.doubleValue / 100.0)
         currencyFormatter.numberStyle = .currency
-        if let currencyString = currencyFormatter.stringFromNumber(newValue) {
+        if let currencyString = currencyFormatter.string(from: newValue) {
             return (currencyString, cursorPosition + (currencyString.length - text.length))
         }
         return (text, cursorPosition)

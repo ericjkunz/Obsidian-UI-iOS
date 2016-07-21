@@ -8,6 +8,7 @@
 
 import Foundation
 import MobileCoreServices
+import UIKit
 
 public protocol Cacheable {
 
@@ -31,12 +32,12 @@ private class SessionDelegate: NSObject, URLSessionDownloadDelegate {
 
     private weak var delegate: DummySessionDelegate?
 
-    @objc func URLSession(session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
-        delegate?.URLSession(session, task: task, didCompleteWithError: error)
+    private func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+        delegate?.URLSession(session: session, task: task, didCompleteWithError: error)
     }
-
-    @objc func URLSession(session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-        delegate?.URLSession(session, downloadTask: downloadTask, didFinishDownloadingToURL: location)
+    
+    private func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        delegate?.URLSession(session: session, downloadTask: downloadTask, didFinishDownloadingToURL: location)
     }
 
 }
@@ -79,9 +80,9 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     // MARK: Private Properties
 
     private var directory: String {
-        let dir = NSString(string: NSString(string: Directories.cache).stringByAppendingPathComponent(UIApplication.sharedApplication().bundleIdentifier)).stringByAppendingPathComponent(name)
+        let dir = NSString(string: NSString(string: Directories.cache).appendingPathComponent(UIApplication.shared().bundleIdentifier)).appendingPathComponent(name)
         do {
-            try FileManager.defaultManager().createDirectoryAtPath(dir, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
         } catch _ {}
         return dir
     }
@@ -105,7 +106,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     public init(name: String, configuration: URLSessionConfiguration) {
         self.name = name
         sessionDelegate = SessionDelegate()
-        session = URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: OperationQueue.mainQueue())
+        session = URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: OperationQueue.main())
         sessionDelegate.delegate = self
     }
 
@@ -123,21 +124,21 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
 
     // MARK: File Management
 
-    private func path(item: Cacheable, part: Bool = false) -> String {
+    private func path(for item: Cacheable, part: Bool = false) -> String {
 
         var ext = item.url.pathExtension
 
-        if let typeIdentifier = item.fileType, typeExtension = UTTypeCopyPreferredTagWithClass(typeIdentifier, kUTTagClassFilenameExtension)?.takeUnretainedValue() as? String {
+        if let typeIdentifier = item.fileType, let typeExtension = UTTypeCopyPreferredTagWithClass(typeIdentifier, kUTTagClassFilenameExtension)?.takeUnretainedValue() as? String {
             ext = typeExtension
         }
 
         var filename = NSString(string: item.identifier)
 
-        if let pathExtension = ext, filenameWithExtension = filename.appendingPathExtension(pathExtension) {
+        if let pathExtension = ext, let filenameWithExtension = filename.appendingPathExtension(pathExtension) {
             filename = filenameWithExtension
         }
 
-        if let filenameWithPartExtension = filename.appendingPathExtension("part") where part {
+        if let filenameWithPartExtension = filename.appendingPathExtension("part"), part {
             filename = filenameWithPartExtension
         }
 
@@ -149,15 +150,15 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
         return FileManager.default.fileExists(atPath: path)
     }
 
-    private func task(item: Cacheable) -> URLSessionDownloadTask? {
+    private func task(_ item: Cacheable) -> URLSessionDownloadTask? {
 
-        let contentPath = path(item)
-        let partPath = path(item, part: true)
+        let contentPath = path(for: item)
+        let partPath = path(for: item, part: true)
 
-        if exists(contentPath) {
+        if exists(path: contentPath) {
             return nil
-        } else if let partData = NSData(contentsOfFile: partPath) where exists(partPath) {
-            return session.downloadTaskWithResumeData(partData)
+        } else if let partData = NSData(contentsOfFile: partPath), exists(path: partPath) {
+            return session.downloadTask(withResumeData: partData as Data)
         } else {
             return session.downloadTask(with: item.url as URL)
         }
@@ -178,7 +179,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
                     let result = val.task.state == .suspended
                     return result
                 })
-                if let first = stopped.keys.first, task = stopped[first]?.task {
+                if let first = stopped.keys.first, let task = stopped[first]?.task {
                     task.resume()
                 }
             }
@@ -209,8 +210,8 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
                     self.tasks[item.identifier] = (task: task, item: item)
                 }
             } else {
-                DispatchQueue.main.asynchronously(DispatchQueue.main) {
-                    self.handleItemCompletion(item, error: nil)
+                DispatchQueue.main.async {
+                    self.handleCompletion(of: item, error: nil)
                 }
             }
         }
@@ -238,7 +239,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
             if let entry = self.tasks[item.identifier] {
 
                 if entry.task.state == .running {
-                    let path = self.path(item, part: true)
+                    let path = self.path(for: item, part: true)
                     entry.task.cancelByProducingResumeData { (data) -> Void in
                         data?.writeToFile(path, atomically: true)
                     }
@@ -268,8 +269,8 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
 
     */
     public func get(item: T) -> NSURL? {
-        let filePath = path(item, part: false)
-        if exists(filePath) {
+        let filePath = path(for: item, part: false)
+        if exists(path: filePath) {
             return NSURL(fileURLWithPath: filePath)
         } else {
             return nil
@@ -286,7 +287,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
                 return val.task == downloadTask
             })
 
-            if let item = matching.values.first?.item, path = location.path {
+            if let item = matching.values.first?.item, let path = location.path {
                 let toPath = self.path(item)
                 do {
                     try FileManager.defaultManager().moveItemAtPath(path, toPath: toPath)
@@ -306,12 +307,12 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
     private func URLSession(session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
 
         queueMutex.perform {
-            self.tasks = self.tasks.filter({ (key, val) -> Bool in
+            self.tasks = self.tasks.filter(includeElement: { (key, val) -> Bool in
                 let match = val.task == task
 
                 if match {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.handleItemCompletion(val.item, error: error)
+                    DispatchQueue.main.async {
+                        self.handleCompletion(of: val.item, error: error)
                     }
                 }
 
@@ -325,7 +326,7 @@ public class DownloadCache<T: Cacheable>: DummySessionDelegate {
 
     // MARK: Notifications
 
-    private func handleItemCompletion(item: T, error: NSError?) {
+    private func handleCompletion(of item: T, error: NSError?) {
         if let e = error {
             self.itemFailure?(item: item, error: e)
         } else {

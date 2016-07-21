@@ -18,7 +18,7 @@ public extension Array {
      - returns: Chunks of the receiver
 
      */
-    public func chunk(splitSize: Index) -> [[Element]] {
+    public func chunk(_ splitSize: Index) -> [[Element]] {
         if count <= splitSize {
             return [self]
         } else {

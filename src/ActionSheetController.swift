@@ -243,8 +243,8 @@ public final class ActionSheetController: UIViewController, UIViewControllerTran
             button.setTitleColor(action.textColor, for: .normal)
             button.setTitleColor(action.highlightedTextColor, for: .highlighted)
 
-            button.setBackgroundColor(color: action.backgroundColor, forState: .normal)
-            button.setBackgroundColor(color: action.highlightedBackgroundColor, forState: .highlighted)
+            button.setBackgroundColor(to: action.backgroundColor, forState: .normal)
+            button.setBackgroundColor(to: action.highlightedBackgroundColor, forState: .highlighted)
 
             button.titleLabel?.font = action.font
 

@@ -22,7 +22,7 @@ import UIKit
     @IBInspectable public var color: UIColor? {
         didSet {
             if let c = color {
-                setBackgroundColor(c, forState: .Normal)
+                setBackgroundColor(to: c, forState: .normal)
             }
         }
     }
@@ -34,7 +34,7 @@ import UIKit
      - parameter state: The state for which the color should be set
      
      */
-    public func setBackgroundColor(color: UIColor, forState state: UIControlState) {
+    public func setBackgroundColor(to color: UIColor, forState state: UIControlState) {
         
         setBackgroundImage(color.image, for: state)
         

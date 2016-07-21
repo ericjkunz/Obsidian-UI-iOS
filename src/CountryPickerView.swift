@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /**
 The PickerDelegate protocol defines messages sent to a picker delegate
@@ -14,7 +15,7 @@ involving tapped buttons of its accessory view and changing selection.
 A CountryPickerDelegate must also conform to the PickerDelegate protocol.
 */
 public protocol CountryPickerDelegate: PickerInputDelegate {
-    func pickerDidChangeCountry(picker: CountryPicker)
+    func pickerDidChangeCountry(_ picker: CountryPicker)
 }
 
 /// A picker view with all known legal countries.
@@ -22,7 +23,7 @@ public protocol CountryPickerDelegate: PickerInputDelegate {
 public class CountryPicker: PickerInputView {
 
     convenience init() {
-        self.init(frame: UIScreen.mainScreen().bounds)
+        self.init(frame: UIScreen.main().bounds)
     }
 
     override init(frame: CGRect) {
@@ -80,11 +81,11 @@ public class CountryPicker: PickerInputView {
         }
 
         let allCountryNames = codesAndCountries.values
-        alphabeticalCountryNames = allCountryNames.sort()
+        alphabeticalCountryNames = allCountryNames.sorted()
     }
 
     private func updateCountry() {
-        countryName = alphabeticalCountryNames[pickerView.selectedRowInComponent(0)]
+        countryName = alphabeticalCountryNames[pickerView.selectedRow(inComponent: 0)]
         if let name = countryName {
             countryCode = codesAndCountries[name]
         }
@@ -115,8 +116,8 @@ public class CountryPicker: PickerInputView {
         let title = alphabeticalCountryNames[row]
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.Center
-        let textAttributes = [NSForegroundColorAttributeName : UIColor.blackColor(), NSParagraphStyleAttributeName : paragraphStyle]
+        paragraphStyle.alignment = NSTextAlignment.center
+        let textAttributes = [NSForegroundColorAttributeName : UIColor.black(), NSParagraphStyleAttributeName : paragraphStyle]
         let attributedTitle = AttributedString(string: title, attributes: textAttributes)
 
         let label = UILabel()
@@ -130,11 +131,11 @@ public class CountryPicker: PickerInputView {
         countryPickerDelegate?.pickerDidChangeCountry(self)
     }
 
-    public override func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    public override func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
 
-    public override func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    public override func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return alphabeticalCountryNames.count
     }
 

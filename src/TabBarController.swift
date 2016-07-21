@@ -14,7 +14,7 @@ public protocol TabBarDelegate: class {
     var selectedTabIndex: Int { get }
 
     /// Called when the user selects a tab
-    func selectTab(index: Int)
+    func selectTab(_ index: Int)
 
     /// A computed array of the tab names
     var tabNames: [String] { get }
@@ -101,7 +101,7 @@ public class TabBarController: UIViewController, TabBarDelegate {
     - parameter tab: The index of the tab to select.
 
     */
-    public func selectTab(tab: Int) {
+    public func selectTab(_ tab: Int) {
 
         selectedTabIndex = tab
         tabBar.selectTab(tab)

@@ -33,7 +33,7 @@ extension UIViewController {
     public func presentDrawer(controller: UIViewController, side: DrawerSide = .Right, navigationController: UINavigationController? = UINavigationController()) {
         navigationController?.viewControllers = [controller]
         let presented = navigationController ?? controller
-        presented.transitioningDelegate = DrawerTransitioningDelegate(from: side)
+        presented.transitioningDelegate = _DrawerTransitioningDelegate(from: side)
         presented.modalPresentationStyle = .custom
         presented.present(self)
     }

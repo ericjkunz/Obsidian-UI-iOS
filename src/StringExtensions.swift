@@ -20,7 +20,7 @@ public extension String {
 
     // Returns the character at index i
     public subscript(i: Int) -> Character {
-        return self[self.startIndex.advancedBy(i)]
+        return self[index(startIndex, offsetBy: i)]
     }
 
     /// Removes the end character from the String
@@ -32,8 +32,8 @@ public extension String {
     - parameter removeThisMany: The number of characters to remove from the end of the String.
 
     */
-    public mutating func removeCharactersFromEnd(removeThisMany: Int) {
-        self = substringToIndex(endIndex.advancedBy(-removeThisMany))
+    public mutating func removeCharactersFromEnd(_ removeThisMany: Int) {
+        self = substring(to: index(endIndex, offsetBy: -removeThisMany))
     }
 
     /// Removes the first character from the String.
@@ -45,7 +45,7 @@ public extension String {
     - Parameter removeThisMany: The number of characters to remove from the start of the String.
 
     */
-    public mutating func removeCharactersFromStart(removeThisMany: Int) {
-        self = substringFromIndex(startIndex.advancedBy(removeThisMany, limit: endIndex))
+    public mutating func removeCharactersFromStart(_ removeThisMany: Int) {
+        self = substring(from: index(startIndex, offsetBy: removeThisMany, limitedBy: endIndex)!)
     }
 }

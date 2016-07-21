@@ -96,7 +96,7 @@ public final class BasicTabBar: BaseTabBar {
         
         buttons.forEach { self.addSubview($0) }
         
-        selectTab(index: delegate.selectedTabIndex)
+        selectTab(delegate.selectedTabIndex)
         
     }
     
@@ -109,7 +109,7 @@ public final class BasicTabBar: BaseTabBar {
     }
     
     /// :nodoc:
-    public override func selectTab(index: Int) {
+    public override func selectTab(_ index: Int) {
         
         if var buttons = subviews as? [UIButton] {
             buttons.sort(isOrderedBefore: { $0.x < $1.x })
@@ -120,7 +120,7 @@ public final class BasicTabBar: BaseTabBar {
         setNeedsDisplay()
     }
     
-    public override func frameForTab(index: Int) -> CGRect {
+    public override func frameForTab(_ index: Int) -> CGRect {
         if var buttons = subviews as? [UIButton] {
             buttons.sort(isOrderedBefore: { $0.x < $1.x })
             for (i, b) in buttons.enumerated() {
@@ -129,12 +129,12 @@ public final class BasicTabBar: BaseTabBar {
                 }
             }
         }
-        return super.frameForTab(index: index)
+        return super.frameForTab(index)
     }
     
     // MARK: Actions
     private dynamic func selectTabButton(button: UIButton) {
-        delegate.selectTab(index: button.tag)
+        delegate.selectTab(button.tag)
     }
     
     // MARK: UIView Overrides
