@@ -61,7 +61,9 @@ public class Photos {
     
     private class func createAssetCollection(named name: String, completion: (collection: PHAssetCollection?) -> Void) {
         let fetchOptions = PHFetchOptions()
-        let fetchResult = PHAssetCollection.fetchAssetCollections(with: PHAssetCollectionType.album, subtype: PHAssetCollectionSubtype.any, options: fetchOptions)
+        let fetchResult = PHAssetCollection.fetchAssetCollections(with: PHAssetCollectionType.album,
+                                                                  subtype: PHAssetCollectionSubtype.any,
+                                                                  options: fetchOptions)
         for i in 0..<fetchResult.count {
             let collection = fetchResult[i]
             if collection.localizedTitle == name {
@@ -166,22 +168,29 @@ public class Photos {
      - parameter contentMode: How the image will fit into the size parameter
      
      */
-    public class func latestImage(size: CGSize, contentMode: PHImageContentMode, requestOptions: PHImageRequestOptions = defaultOptions(), completion: ImageCompletion) {
+    public class func latestImage(size: CGSize, contentMode: PHImageContentMode, requestOptions: PHImageRequestOptions? = nil, completion: ImageCompletion) {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [SortDescriptor(key: "creationDate", ascending: true)]
+        fetchOptions.fetchLimit = 1
+
         let fetchResult = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: fetchOptions)
-        
+
         guard let lastAsset = fetchResult.lastObject else {
             completion(nil)
             return
         }
         
-        PHImageManager.default().requestImage(for: lastAsset, targetSize: size, contentMode: contentMode, options: nil) { (image: UIImage?, dictionary: [NSObject : AnyObject]?) -> Void in
+        let defaultReqOptions = PHImageRequestOptions()
+        defaultReqOptions.deliveryMode = .highQualityFormat
+        
+        PHImageManager.default().requestImage(for: lastAsset, targetSize: size, contentMode: contentMode, options: requestOptions ?? defaultReqOptions)
+        {
+            (image: UIImage?, dictionary: [NSObject : AnyObject]?) -> Void in
             completion(image)
         }
     }
     
-    private func defaultOptions() -> PHImageRequestOptions {
+    public func defaultOptions() -> PHImageRequestOptions {
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
         return options
