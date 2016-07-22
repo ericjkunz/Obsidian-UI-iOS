@@ -9,6 +9,9 @@
 import UIKit
 import AVFoundation
 
+// check out https://cocoapods.org/pods/LLSimpleCamera
+// and Fastt Camera
+
 public protocol CameraDelegate {
     
     /// Delegates receive this message whenever the camera captures and outputs a new video frame.
