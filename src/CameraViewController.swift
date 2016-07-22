@@ -180,7 +180,7 @@ class ALFCameraViewController: UIViewController, UIImagePickerControllerDelegate
     
     private func loadPhotoLibraryPreviewImage() {
         if let libraryButton = photoLibraryButton {
-            Photos.latestAsset(size: libraryButton.frame.size, contentMode: .aspectFill, completion: { (image: UIImage?) -> Void in
+            Photos.latestImage(size: libraryButton.frame.size, contentMode: .aspectFill, completion: { (image: UIImage?) -> Void in
                 libraryButton.imageView?.image = image
             })
         }

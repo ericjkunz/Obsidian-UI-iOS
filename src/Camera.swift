@@ -364,13 +364,13 @@ public class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVC
         stillImageOutput.captureStillImageAsynchronously(from: stillImageOutput.connection(withMediaType: AVMediaTypeVideo), completionHandler: { (sampleBuffer, error) -> Void in
             if sampleBuffer != nil {
                 
-                let data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
+                let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer!, previewPhotoSampleBuffer: nil)
                 let image = UIImage(data: data!)
                 if let capturedImage = image {
                     if let finishIt = completion {
                         finishIt(capturedImage: capturedImage)
                     } else {
-                        Photos.saveImage(image: image!)
+                        Photos.saveImageToPhotosLibrary(image!)
                     }
                 }
             }
